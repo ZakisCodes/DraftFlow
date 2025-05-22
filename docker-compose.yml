@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace:cached
+    ports:
+      - "8000:8000"
+    command: uvicorn src.main:app --host 0.0.0.0 --reload
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+
+
+
