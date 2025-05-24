@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transform - Modern Text Styling Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{url_for('static', path ='css/style1.css')}}?v={{ time }}">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-container">
+        <div class="logo-avatar"></div>
+        <div class="brand-text">Transform</div>
+      </div>
+      <button class="profile-button" id="profileBtn">
+        <span>Profile</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 4L13.5 4.42C13.1 4.8 12.6 5.16 12 5.16C11.4 5.16 10.9 4.8 10.5 4.42L9 4L3 7V9H21ZM12 7.58C12.5 7.58 13 7.69 13.42 7.86L15 9H9L10.58 7.86C11 7.69 11.5 7.58 12 7.58Z"/>
+        </svg>
+      </button>
+    </header>
+
+    <main class="main-content">
+      <section class="hero-section">
+        <h1 class="main-title">TRANSFORM YOUR TEXT</h1>
+        <p class="subtitle">Convert unformatted text into beautifully styled documents with AI-powered formatting</p>
+      </section>
+
+      <section class="editor-section">
+        <div class="editor-container">
+          <textarea
+            class="text-editor"
+            id="textEditor"
+            placeholder="Paste your unformatted text here and watch the magic happen... ✨"
+            rows="12"
+          ></textarea>
+          <div class="char-counter" id="charCounter">0 characters</div>
+        </div>
+      </section>
+
+      <section class="action-section">
+        <div class="button-group">
+          <button class="generator-button" id="generateBtn">
+            <span id="buttonText">Transform Text</span>
+            <svg class="ai-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M21,9V7L15,4L13.5,4.42C13.1,4.8 12.6,5.16 12,5.16C11.4,5.16 10.9,4.8 10.5,4.42L9,4L3,7V9H21M12,7.58C12.5,7.58 13,7.69 13.42,7.86L15,9H9L10.58,7.86C11,7.69 11.5,7.58 12,7.58Z"/>
+            </svg>
+          </button>
+          <button class="clear-button" id="clearBtn">Clear All</button>
+        </div>
+      </section>
+
+      <section class="output-section" id="outputSection">
+        <div class="output-container">
+          <div class="output-header">
+            <h3 class="output-title">✨ Transformed Text</h3>
+            <button class="copy-button" id="copyBtn">Copy to Clipboard</button>
+          </div>
+          <div class="output-content" id="outputContent"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+<!--remove it when in production-->
+  <script src="{{url_for('static',path='js/script1.js')}}?v={{ time }}"></script>
+  </body>
+</html>
