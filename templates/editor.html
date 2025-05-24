@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Chat Interface</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{url_for('static', path ='css/style2.css')}}?v={{ time }}">
+</head>
+<body>
+  <!-- Floating background elements -->
+  <div class="floating-element"></div>
+  <div class="floating-element"></div>
+  <div class="floating-element"></div>
+
+  <div class="chat-container">
+    <header class="chat-header">
+      <div class="header-content">
+                <!-- Left: Profile and Title -->
+                <div class="header-left">
+                    <div class="profile-avatar">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c26d61a5a5363fe437422f795508ea0a0e8076ea?placeholderIfAbsent=true&apiKey=836d9685511846998a63193f3b17c7be" alt="Profile" class="profile-image">
+                    </div>
+                    <h1 class="chat-title">Chat</h1>
+                </div>
+
+                <!-- Center: Navigation Buttons -->
+                <div class="header-center">
+                    <button class="nav-button active" data-nav="home">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Home</span>
+                    </button>
+                    
+                    <button class="nav-button" data-nav="drafts">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>My Drafts</span>
+                    </button>
+                    
+                    <button class="nav-button" data-nav="new">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>New Draft</span>
+                    </button>
+                    
+                    <button class="nav-button" data-nav="templates">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 8H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 8V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Templates</span>
+                    </button>
+                    
+                    <button class="nav-button" data-nav="help">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Help</span>
+                    </button>
+                </div>
+
+                <!-- Right: Status and Export -->
+                <div class="header-right">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        Online
+                    </div>
+                    
+                    <button class="export-button" onclick="openExportModal()">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15V19C21 19.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Export</span>
+                    </button>
+                </div>
+            </div>
+    </header>
+    
+    <!-- Export Modal -->
+    <div class="export-modal" id="exportModal">
+        <div class="export-content">
+            <div class="export-header">
+                <h2 class="export-title">Export Options</h2>
+                <button class="close-button" onclick="closeExportModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="export-options">
+                <div class="option-group">
+                    <div class="option-label">Format</div>
+                    <div class="option-buttons">
+                        <button class="option-button selected" data-option="format" data-value="pdf">PDF</button>
+                        <button class="option-button" data-option="format" data-value="docx">DOCX</button>
+                        <button class="option-button" data-option="format" data-value="txt">TXT</button>
+                        <button class="option-button" data-option="format" data-value="html">HTML</button>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <div class="option-label">Content</div>
+                    <div class="option-buttons">
+                        <button class="option-button selected" data-option="content" data-value="all">Full Conversation</button>
+                        <button class="option-button" data-option="content" data-value="selected">Selected Messages</button>
+                        <button class="option-button" data-option="content" data-value="summary">Summary Only</button>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <div class="option-label">Include</div>
+                    <div class="option-buttons">
+                        <button class="option-button selected" data-option="include" data-value="timestamps">Timestamps</button>
+                        <button class="option-button selected" data-option="include" data-value="metadata">Metadata</button>
+                        <button class="option-button" data-option="include" data-value="attachments">Attachments</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <button class="action-button cancel-button" onclick="closeExportModal()">Cancel</button>
+                <button class="action-button confirm-button" onclick="confirmExport()">Export</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <main class="chat-content">
+      <div class="chat-layout">
+        <section class="chat-column">
+          <div class="chat-panel">
+            <div class="chat-window">
+              <div class="messages-wrapper" id="messagesWrapper">
+                <div class="message-container received">
+                  <div class="message message-received">Hi there! How can I help you today? 👋</div>
+                </div>
+                <div class="message-container sent">
+                  <div class="message message-sent">I'm looking for information about your new product.</div>
+                </div>
+                <div class="message-container received">
+                  <div class="message message-received">Of course! Our new product has just launched with several exciting features. Would you like me to tell you more about them?</div>
+                </div>
+                <div class="message-container sent">
+                  <div class="message message-sent">Yes, please! Especially interested in pricing.</div>
+                </div>
+                <div class="message-container received">
+                  <div class="message message-received">The pricing starts at $29/month for the basic plan, which includes all core features. Premium plans with additional capabilities are available at $49 and $79 per month. Would you like to see a detailed breakdown? 💰</div>
+                </div>
+              </div>
+              <div class="message-input-container">
+                <input type="text" class="message-input" placeholder="Type your message..." id="messageInput">
+                <button class="send-button" id="sendButton">
+                  <svg class="send-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <section class="content-column">
+          <div class="content-panel">
+            <h2 class="content-title">Product Features</h2>
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+              Our cutting-edge platform offers a comprehensive solution designed for modern businesses:
+            </p>
+            <ul class="feature-list">
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                Real-time data synchronization
+              </li>
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                Advanced analytics dashboard
+              </li>
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                Customizable user interface
+              </li>
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                Enterprise-grade security
+              </li>
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                24/7 premium support
+              </li>
+              <li class="feature-item">
+                <div class="feature-icon"></div>
+                API integrations
+              </li>
+            </ul>
+            
+            <div style="margin-top: 32px; padding: 24px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--border-radius); backdrop-filter: blur(10px);">
+              <h3 style="color: var(--accent-primary); margin-bottom: 12px; font-size: 18px; font-weight: 600;">Special Offer</h3>
+              <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.5;">
+                Get 30% off your first 3 months when you sign up today. Limited time offer!
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="{{url_for('static',path='js/script2.js')}}?v={{ time }}"></script>
+</body>
+</html>
