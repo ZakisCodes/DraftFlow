@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 router = APIRouter()
 template = Jinja2Templates(directory="templates")
 
-@router.get("/")
+@router.get("/home")
 async def home(req: Request):
     return template.TemplateResponse(name="home.html", context={"request": req})
 
@@ -12,6 +12,6 @@ async def home(req: Request):
 async def result(req: Request):
     return template.TemplateResponse(name="editor.html", context={"request": req})
 
-@router.get("/auth")
+@router.get("/")
 async def auth(req: Request):
     return template.TemplateResponse(name="auth.html", context={"request": req})
