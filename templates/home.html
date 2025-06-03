@@ -10,7 +10,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="{{url_for('static', path ='css/style1.css')}}?v={{ time }}">
+  <link rel="stylesheet" href="{{url_for('static', path ='css/style1.css')}}">
 </head>
 
 <body>
@@ -22,14 +22,16 @@
 </div>
         <div class="brand-text">DraftFlow</div>
       </div>
-      <button class="login-button" id="logInBtn">
-        <span>LogIn</span>
-      </button>
-      <button class="profile-button" id="profileBtn">
-        <div class="profile-avatar">
-          <span id="initial">ZA</span>
-        </div>
-      </button>
+      <div class="profile-loading">  
+        <button class="login-button" id="logInBtn">
+          <span>LogIn</span>
+        </button>
+        <button class="profile-button" id="profileBtn">
+          <div class="profile-avatar">
+            <span id="initial">ZA</span>
+          </div>
+        </button>
+      </div>
       <div class="profile-dropdown" id="profileDropdown">
         <div class="profile-dropdown-content">
           <div class="profile-header">
@@ -129,7 +131,7 @@
     </main>
   </div>
   <!--remove it when in production-->
-  <script type="module" src="{{url_for('static',path='js/script1.js')}}"></script>
+  <script type="module" src="{{url_for('static',path='js/script1.js')}}?v={{ time }}"></script>
 </body>
 
 </html>

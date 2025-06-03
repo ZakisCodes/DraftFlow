@@ -43,10 +43,16 @@ const profileInitial = document.getElementById('initial');
 // State
 let isGenerating = false;
 let isProfileDropdownOpen = false;
-
-// Assuming 'auth' (from getAuth()) and 'db' (from getFirestore()) are available in this scope.
-// Also assuming you have these DOM elements:
-
+// Add this function to show the profile area
+function showProfileArea() {
+  const profileContainer = document.querySelector(".profile-loading");
+  if (profileContainer) {
+    profileContainer.style.transition = "all 0.60s cubic-bezier(0.4, 0, 0.2, 1)";
+profileContainer.style.opacity = "1";
+profileContainer.style.transform = "translateY(0)";
+  }
+}
+// Checking the user if logged in or not?
 onAuthStateChanged(auth, (user) => {
     if (user) {
         // --- User is Logged In ---
@@ -72,10 +78,10 @@ onAuthStateChanged(auth, (user) => {
 
                     if (pronameElement) pronameElement.innerText = userData.name || user.displayName || user.email;
                     if (proemailElement) proemailElement.innerText = userData.email || user.email;
-
+                    
                     // Update profile avatar initials (e.g., "ZA" in your HTML)
                     if (profileAvatarSpan && userData.name) {
-                        const nameParts = userData.name.split(' ').filter(part => part.length > 0);
+                      const nameParts = userData.name.split(' ').filter(part => part.length > 0);
                         if (nameParts.length===1){
                            const initials = userData.name.substring(0, 2).toUpperCase();
                            profileInitial.innerText = initials; // Take first two initials
@@ -85,21 +91,22 @@ onAuthStateChanged(auth, (user) => {
                             const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
                             profileInitial.innerText = initials.substring(0, 2); // Take first two initials
                             console.log("Loop2: ",initials);
-
+                            
+                          }
+                          //                      profileAvatarSpan.innerText = initials.substring(0, 2); // Take first two initials
+                        } else if (profileAvatarSpan && user.email) {
+                          profileAvatarSpan.innerText = user.email.substring(0, 2).toUpperCase(); // Fallback to email initials
                         }
-  //                      profileAvatarSpan.innerText = initials.substring(0, 2); // Take first two initials
-                    } else if (profileAvatarSpan && user.email) {
-                        profileAvatarSpan.innerText = user.email.substring(0, 2).toUpperCase(); // Fallback to email initials
-                    }
-
-                } else {
-                    console.log("No matching user document found in Firestore for UID:", userUID);
-                    // Fallback to Firebase Auth object data if Firestore document not found
+                        
+                        showProfileArea()
+                      } else {
+                        console.log("No matching user document found in Firestore for UID:", userUID);
+                        // Fallback to Firebase Auth object data if Firestore document not found
                     if (profileAvatarSpan && user.email) {
-                        profileAvatarSpan.innerText = user.email.substring(0, 2).toUpperCase();
+                      profileAvatarSpan.innerText = user.email.substring(0, 2).toUpperCase();
                     }
-                }
-            })
+                  }
+                })
             .catch((error) => {
                 console.error("Error fetching user data from Firestore:", error);
                 // Even if Firestore fails, the user is still logged in via Firebase Auth
@@ -108,18 +115,18 @@ onAuthStateChanged(auth, (user) => {
                     profileAvatarSpan.innerText = user.email.substring(0, 2).toUpperCase();
                 }
             });
-
-        // Optional: Attach event listeners here if not already attached globally
-        if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
-            logoutButton.onclick = () => {
+            
+            // Optional: Attach event listeners here if not already attached globally
+            if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
+              logoutButton.onclick = () => {
                 if (confirm("Are you sure you want to logout?")) {
-                    // Call your shared signOutUser function from firebaseAuthObserver.js
-                    signOutUser();
+                  // Call your shared signOutUser function from firebaseAuthObserver.js
+                  signOutUser();
                 }
-            };
-        }
-        if (profileBtn) {
-            profileBtn.onclick = () => {
+              };
+            }
+            if (profileBtn) {
+              profileBtn.onclick = () => {
                 // Handle click on profile button (e.g., redirect to profile page)
                 console.log("Profile button clicked!");
                 // window.location.href = "/profile"; // Example
@@ -127,28 +134,30 @@ onAuthStateChanged(auth, (user) => {
         }
 
 
-    } else {
+      } else {
         // --- User is Logged Out ---
         console.log("User is not logged in.");
-
+        
         // 1. Show Login Button, Hide Profile Button
         if (loginBtn) loginBtn.style.display = 'flex';
         if (profileBtn) profileBtn.style.display = 'none';
 
+        
         // 2. Clear any displayed user data
         const pronameElement = document.getElementById("proname");
         const proemailElement = document.getElementById("proemail");
         if (pronameElement) pronameElement.innerText = "";
         if (proemailElement) proemailElement.innerText = "";
         if (profileAvatarSpan) profileAvatarSpan.innerText = "ZA"; // Reset to default initials
-
+        
         // Optional: Attach login button listener
         if (loginBtn) {
-            loginBtn.onclick = () => {
-                window.location.href = "/"; // Redirect to your auth/login page
-            };
+          loginBtn.onclick = () => {
+            window.location.href = "/"; // Redirect to your auth/login page
+          };
         }
-    }
+        showProfileArea()
+      }
 });
 // Firebase Logout Function
 function FirebaseLogout() {
@@ -172,9 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const heroSection = document.querySelector(".hero-section");
     if (heroSection) heroSection.style.opacity = "1";
   }, 100);
-
-  // Initialize logout button
-  //initializeLogoutButton();
 });
 
 // Character counter
