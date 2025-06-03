@@ -605,77 +605,11 @@ body::before {
   transform: translateY(-2px);
 }
 
+/* Use if needed only */
 .ai-icon {
   width: clamp(20px, 4vw, 24px);
   height: clamp(20px, 4vw, 24px);
   transition: var(--transition);
-}
-
-/* Output section */
-.output-section {
-  width: 100%;
-  max-width: min(1000px, 95vw);
-  margin-top: var(--spacing-xl);
-  opacity: 0;
-  transform: translateY(30px);
-  transition: var(--transition);
-}
-
-.output-section.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.output-container {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
-  padding: clamp(1rem, 3vw, 2rem);
-  position: relative;
-}
-
-.output-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--glass-border);
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-}
-
-.output-title {
-  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
-  font-weight: 600;
-  color: var(--accent-success);
-}
-
-.copy-button {
-  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
-  border-radius: var(--border-radius-sm);
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  color: var(--text-secondary);
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.copy-button:hover {
-  background: var(--accent-success);
-  color: var(--text-primary);
-}
-
-.output-content {
-  color: var(--text-primary);
-  line-height: 1.7;
-  white-space: pre-wrap;
-  font-family: inherit;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  word-break: break-word;
-  overflow-wrap: break-word;
 }
 
 /* Status messages */
