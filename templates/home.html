@@ -3,7 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- For better iOS experience 
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  -->
+
   <title>Transform - Modern Text Styling Tool</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +37,7 @@
           </div>
         </button>
       </div>
+      
       <div class="profile-dropdown" id="profileDropdown">
         <div class="profile-dropdown-content">
           <div class="profile-header">
@@ -100,8 +106,16 @@
 
       <section class="editor-section">
         <div class="editor-container">
-          <textarea class="text-editor" id="textEditor"
-            placeholder="Paste your unformatted text here and watch the magic happen... ✨" rows="12"></textarea>
+          <textarea 
+               class="text-editor"
+               id="textEditor" 
+               placeholder="Paste your unformatted text here and watch the magic happen... ✨"
+               rows="12"
+               spellcheck="true"
+               autocorrect="off"
+               inputmode="text"
+               autocapitalize="sentences"
+               ></textarea>
             <div class="char-counter" id="charCounter">0 characters</div>
           </div>
       </section>
