@@ -27,12 +27,33 @@
   --border-radius-lg: 24px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Responsive spacing variables */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
 }
 
 /* Base styles */
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
 }
 
 body {
@@ -68,12 +89,9 @@ body::before {
 }
 
 @keyframes backgroundPulse {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.5;
   }
-
   50% {
     opacity: 0.8;
   }
@@ -84,7 +102,7 @@ body::before {
   width: 100%;
   min-height: 100vh;
   position: relative;
-  padding: 2rem;
+  padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
 }
@@ -94,11 +112,14 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: var(--spacing-2xl);
   position: relative;
   z-index: 10;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
-.profile-loading{
+
+.profile-loading {
   opacity: 0;
   transform: translateY(-10px);
 }
@@ -106,12 +127,13 @@ body::before {
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 0.1rem;
+  gap: clamp(0.5rem, 2vw, 1rem);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0.5rem;
+  padding: var(--spacing-xs);
   border-radius: 2rem;
   position: relative;
+  flex-shrink: 0;
 }
 
 /* Option 1: Subtle glow with gentle scale (RECOMMENDED) */
@@ -125,15 +147,11 @@ body::before {
 }
 
 .logo-container.option-1:hover .brand-text {
-  background: linear-gradient(135deg,
-      #6366f1,
-      #a855f7,
-      #ec4899);
+  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 
 /* Enhanced logo and text transitions */
 .logo-avatar {
@@ -146,11 +164,10 @@ body::before {
 
 /* Option 4: No background - just the logo */
 .logo-avatar.clean {
-  width: 48px;
-  height: 48px;
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
   border-radius: 50%;
   background: transparent;
-  /* No background */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,13 +175,10 @@ body::before {
   transition: var(--transition);
   overflow: hidden;
 }
-
-/*
 .logo-avatar.clean:hover {
   transform: scale(1.1);
   filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
 }
-*/
 /* Logo image styles for all */
 .logo-avatar img {
   width: 80%;
@@ -175,7 +189,7 @@ body::before {
 
 .brand-text {
   font-family: "Space Grotesk", sans-serif;
-  font-size: 1.5rem;
+  font-size: clamp(1.125rem, 3vw, 1.5rem);
   font-weight: 700;
   background: linear-gradient(135deg,
       var(--accent-primary),
@@ -186,15 +200,15 @@ body::before {
 }
 
 .profile-button {
-  width: 56px;
-  height: 56px;
+  width: clamp(48px, 10vw, 56px);
+  height: clamp(48px, 10vw, 56px);
   border-radius: 50%;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   color: var(--text-primary);
   font-weight: 600;
-  font-size: 18px;
+  font-size: clamp(16px, 3vw, 18px);
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: var(--transition);
@@ -236,13 +250,10 @@ body::before {
 }
 
 @keyframes pulseGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.5;
     transform: scale(1);
   }
-
   50% {
     opacity: 0.8;
     transform: scale(1.05);
@@ -258,25 +269,27 @@ body::before {
 
 /* Log IN button*/
 .login-button {
-  padding: 1rem 2rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
   border-radius: var(--border-radius-lg);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
   color: #ffffff;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--spacing-xs);
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-  min-width: 140px;
+  min-width: clamp(120px, 25vw, 140px);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .login-button:hover {
@@ -335,17 +348,16 @@ body::before {
     opacity: 0;
     transform: scale(1);
   }
-
   50% {
     opacity: 0.3;
     transform: scale(1.05);
   }
-
   100% {
     opacity: 0;
     transform: scale(1);
   }
 }
+
 
 /* Alternative vibrant color scheme - uncomment to use */
 /*
@@ -378,13 +390,13 @@ body::before {
 /* Hero section */
 .hero-section {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: var(--spacing-2xl);
   position: relative;
 }
 
 .main-title {
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2rem, 8vw, 4rem);
   font-weight: 700;
   background: linear-gradient(135deg,
       var(--text-primary) 0%,
@@ -393,29 +405,26 @@ body::before {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-sm);
   line-height: 1.2;
   position: relative;
   animation: titleGlow 3s ease-in-out infinite;
 }
 
 @keyframes titleGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3));
   }
-
   50% {
     filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.5));
   }
 }
 
 .subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(0.875rem, 3vw, 1.25rem);
   color: var(--text-secondary);
   font-weight: 400;
-  max-width: 600px;
+  max-width: min(600px, 90vw);
   margin: 0 auto;
   opacity: 0;
   animation: fadeInUp 1s ease-out 0.5s forwards;
@@ -426,7 +435,6 @@ body::before {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -436,8 +444,8 @@ body::before {
 /* Editor section */
 .editor-section {
   width: 100%;
-  max-width: 1000px;
-  margin-bottom: 3rem;
+  max-width: min(1000px, 95vw);
+  margin-bottom: var(--spacing-xl);
   position: relative;
 }
 
@@ -447,7 +455,7 @@ body::before {
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius-lg);
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
   box-shadow: var(--shadow-primary);
   transition: var(--transition);
 }
@@ -473,14 +481,14 @@ body::before {
 
 .text-editor {
   width: 100%;
-  min-height: 300px;
+  min-height: clamp(200px, 40vh, 300px);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius);
-  padding: 1.5rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
   color: var(--text-primary);
   font-family: "Inter", monospace;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   line-height: 1.6;
   resize: vertical;
   transition: var(--transition);
@@ -502,8 +510,8 @@ body::before {
 .char-counter {
   position: absolute;
   bottom: 0.2rem;
-  right: 2.5rem;
-  font-size: 0.875rem;
+  right: clamp(1rem, 3vw, 2.5rem);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   color: var(--text-muted);
   background: var(--glass-bg);
   padding: 0.25rem 0.75rem;
@@ -516,18 +524,19 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: var(--spacing-lg);
 }
 
 .button-group {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
 }
 
 .generator-button {
-  padding: 1rem 2rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
   border-radius: var(--border-radius-lg);
   border: none;
   background: linear-gradient(135deg,
@@ -535,7 +544,7 @@ body::before {
       var(--accent-secondary));
   color: var(--text-primary);
   font-family: "Inter", sans-serif;
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -545,8 +554,10 @@ body::before {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-glow);
-  min-width: 200px;
+  min-width: clamp(180px, 40vw, 200px);
   justify-content: center;
+  flex: 1;
+  max-width: 300px;
 }
 
 .generator-button:hover {
@@ -570,20 +581,19 @@ body::before {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
 }
 
 .clear-button {
-  padding: 0.75rem 1.5rem;
+  padding: clamp(0.6rem, 1.5vw, 0.75rem) clamp(1.2rem, 2.5vw, 1.5rem);
   border-radius: var(--border-radius);
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   color: var(--text-secondary);
   font-family: "Inter", sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   cursor: pointer;
   transition: var(--transition);
   backdrop-filter: blur(10px);
@@ -596,16 +606,16 @@ body::before {
 }
 
 .ai-icon {
-  width: 24px;
-  height: 24px;
+  width: clamp(20px, 4vw, 24px);
+  height: clamp(20px, 4vw, 24px);
   transition: var(--transition);
 }
 
 /* Output section */
 .output-section {
   width: 100%;
-  max-width: 1000px;
-  margin-top: 3rem;
+  max-width: min(1000px, 95vw);
+  margin-top: var(--spacing-xl);
   opacity: 0;
   transform: translateY(30px);
   transition: var(--transition);
@@ -621,7 +631,7 @@ body::before {
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius-lg);
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
   position: relative;
 }
 
@@ -629,24 +639,26 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--glass-border);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .output-title {
-  font-size: 1.25rem;
+  font-size: clamp(1.125rem, 2.5vw, 1.25rem);
   font-weight: 600;
   color: var(--accent-success);
 }
 
 .copy-button {
-  padding: 0.5rem 1rem;
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   cursor: pointer;
   transition: var(--transition);
 }
@@ -661,14 +673,17 @@ body::before {
   line-height: 1.7;
   white-space: pre-wrap;
   font-family: inherit;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Status messages */
 .status-message {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
-  padding: 1rem 1.5rem;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius);
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -678,6 +693,8 @@ body::before {
   z-index: 1000;
   transform: translateX(400px);
   transition: var(--transition);
+  max-width: calc(100vw - 2rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
 }
 
 .status-message.visible {
@@ -695,12 +712,30 @@ body::before {
 }
 
 /* Profile Dropdown Styles */
+.profile-dropdown-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
+
+.profile-dropdown-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .profile-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.5rem;
-  min-width: 280px;
+  margin-top: var(--spacing-xs);
+  min-width: clamp(250px, 50vw, 280px);
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
@@ -720,21 +755,21 @@ body::before {
 }
 
 .profile-dropdown-content {
-  padding: 1.5rem;
+  padding: var(--spacing-md);
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--glass-border);
 }
 
 .profile-avatar {
-  width: 48px;
-  height: 48px;
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
   border-radius: 50%;
   background: linear-gradient(135deg,
       var(--accent-primary),
@@ -743,8 +778,9 @@ body::before {
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .profile-info {
@@ -755,12 +791,12 @@ body::before {
 .profile-name {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   margin-bottom: 0.25rem;
 }
 
 .profile-email {
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -777,11 +813,11 @@ body::before {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem;
+  padding: clamp(0.6rem, 1.5vw, 0.75rem);
   border-radius: var(--border-radius);
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   font-weight: 500;
   transition: var(--transition);
   position: relative;
@@ -807,6 +843,8 @@ body::before {
   flex-shrink: 0;
   opacity: 0.7;
   transition: var(--transition);
+  width: clamp(16px, 3vw, 18px);
+  height: clamp(16px, 3vw, 18px);
 }
 
 .profile-menu-item:hover svg {
@@ -816,7 +854,7 @@ body::before {
 .profile-menu-divider {
   height: 1px;
   background: var(--glass-border);
-  margin: 0.5rem 0;
+  margin: var(--spacing-xs) 0;
 }
 
 /* Update existing profile button to be relative positioned */
@@ -824,122 +862,311 @@ body::before {
   position: relative;
 }
 
-/* Responsive design */
+/* Enhanced Responsive design */
+@media (max-width: 1024px) {
+  :root {
+    --spacing-xl: 2.5rem;
+    --spacing-2xl: 3rem;
+  }
+  
+  .main-title {
+    font-size: clamp(1.875rem, 7vw, 3.5rem);
+  }
+}
+/* Clean Mobile Responsive CSS - Replace your existing mobile styles */
+
 @media (max-width: 768px) {
+  :root {
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 2.5rem;
+  }
+
   .app-container {
-    padding: 1rem;
+    padding: var(--spacing-sm);
   }
 
   .app-header {
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    padding: var(--spacing-sm) 0;
   }
 
-  .logo-avatar {
-    width: 40px;
-    height: 40px;
+  .logo-container {
+    justify-content: flex-start;
   }
 
-  .brand-text {
-    font-size: 1.25rem;
+  .profile-button {
+    width: 44px;
+    height: 44px;
   }
 
   .hero-section {
-    margin-bottom: 2rem;
-  }
-
-  .editor-container,
-  .output-container {
-    padding: 1.5rem;
-  }
-
-  .text-editor {
-    min-height: 250px;
-    padding: 1rem;
+    margin-bottom: var(--spacing-lg);
   }
 
   .button-group {
     flex-direction: column;
     width: 100%;
+    gap: var(--spacing-sm);
   }
 
   .generator-button,
   .clear-button {
     width: 100%;
+    max-width: none;
   }
 
   .profile-dropdown {
-    right: -1rem;
-    left: -1rem;
-    min-width: auto;
+    right: 0;
+    top: calc(100% + var(--spacing-sm));
+    min-width: 200px;
+  }
+
+  .output-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .copy-button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Keep header structure consistent */
+  .app-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-container {
+    justify-content: flex-start;
+  }
+
+  .profile-button {
+    width: 44px;
+    height: 44px;
   }
 }
 
 @media (max-width: 480px) {
+  :root {
+    --spacing-xs: 0.375rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.25rem;
+    --spacing-xl: 1.75rem;
+    --spacing-2xl: 2.25rem;
+    --border-radius: 12px;
+    --border-radius-sm: 6px;
+    --border-radius-lg: 16px;
+  }
+
+  html {
+    font-size: 14px;
+  }
+
   .app-container {
-    padding: 0.75rem;
+    padding: var(--spacing-sm);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Clean header without sticky positioning */
+  .app-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+    background: transparent;
+    padding: var(--spacing-sm) 0;
+  }
+
+  .logo-container {
+    justify-content: flex-start;
+    background: transparent;
+    padding: 0;
+  }
+
+  .brand-text {
+    font-size: clamp(1rem, 4vw, 1.25rem);
   }
 
   .profile-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+    z-index: 101;
   }
 
-  .editor-container,
-  .output-container {
-    padding: 1rem;
+  /* Hero section */
+  .hero-section {
+    margin-bottom: var(--spacing-xl);
+    padding: 0;
+  }
+
+  .main-title {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    line-height: 1.1;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .subtitle {
+    font-size: clamp(0.875rem, 3.5vw, 1rem);
+    line-height: 1.5;
+  }
+
+  /* Editor section */
+  .editor-section {
+    width: 100%;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .editor-container {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
   }
 
   .text-editor {
-    min-height: 200px;
+    min-height: 180px;
+    max-height: 40vh;
+    padding: var(--spacing-md);
+    font-size: 16px;
+    border-radius: var(--border-radius-sm);
+    line-height: 1.5;
+    resize: none;
+  }
+
+  /* Buttons */
+  .button-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+  }
+
+  .generator-button {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 1rem;
+    min-height: 52px;
+    border-radius: var(--border-radius);
+  }
+
+  .clear-button {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
     font-size: 0.875rem;
+    min-height: 44px;
+    border-radius: var(--border-radius-sm);
   }
 
-  .status-message {
-    top: 1rem;
-    right: 1rem;
-    left: 1rem;
-    transform: translateY(-100px);
+  /* Fixed dropdown positioning 
+  .profile-dropdown-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+  }
+  */
+
+.profile-dropdown {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    margin: 0;
+    min-width: auto;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    transform: translateY(100%); /* Start off-screen */
+    /* Keep the transition here, it applies to any transform changes */
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.4, 1), opacity 0.4s ease-out; /* Add opacity for completeness if you want it to fade */
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 1000;
   }
 
-  .status-message.visible {
-    transform: translateY(0);
+  .profile-dropdown.visible {
+    transform: translateY(0); /* Slide into view */
+    opacity: 1; /* Ensure it's visible */
+    pointer-events: auto;
+  }
+
+  /* Add these for the initial hidden state on mobile if you want it completely hidden until visible */
+  .profile-dropdown:not(.visible) {
+    pointer-events: none; /* Disable interaction when hidden */
+    opacity: 0; /* Make it transparent when hidden, for a fading effect on close */
+  }
+
+  .profile-dropdown-content {
+    padding: var(--spacing-lg) var(--spacing-md)
+             max(var(--spacing-md), env(safe-area-inset-bottom));
+  }
+    /* Output section */
+  .output-section {
+    width: 100%;
+    margin-top: var(--spacing-xl);
+  }
+
+  .output-container {
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+  }
+
+  .output-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .copy-button {
+    align-self: stretch;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+    min-height: 40px;
+  }
+
+  /* Enhanced touch interactions */
+  .generator-button:active,
+  .clear-button:active,
+  .copy-button:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Better focus states */
+  .text-editor:focus,
+  .generator-button:focus,
+  .clear-button:focus,
+  .copy-button:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
   }
 }
 
-/* Loading animation */
-.typing-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.typing-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  animation: typingAnimation 1.4s infinite;
-}
-
-.typing-dot:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-dot:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes typingAnimation {
-
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.4;
+  /* Remove hover effects on touch devices */
+  @media (hover: none) {
+    .generator-button:hover,
+    .clear-button:hover,
+    .copy-button:hover,
+    .profile-button:hover {
+      transform: none;
+      filter: none;
+      background: initial;
+      box-shadow: initial;
+    }
   }
-
-  30% {
-    transform: translateY(-10px);
-    opacity: 1;
-  }
-}
