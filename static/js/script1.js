@@ -11,22 +11,6 @@ import {
   doc,
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
-// Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBp5hN8nhz-pYkyo6MZvysR4ViB1ehWfJ0",
-  authDomain: "draftflow-b7b11.firebaseapp.com",
-  projectId: "draftflow-b7b11",
-  storageBucket: "draftflow-b7b11.firebasestorage.app",
-  messagingSenderId: "269160881503",
-  appId: "1:269160881503:web:b8dd4446dbd68bbc626aea",
-  measurementId: "G-HTEHKFJ880",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore();
-
 // DOM elements
 const textEditor = document.getElementById("textEditor");
 const generateBtn = document.getElementById("generateBtn");
@@ -48,110 +32,124 @@ let isGenerating = false;
 let isProfileDropdownOpen = false;
 let initials = '';
 let idToken = null;
-
-// Checking the user if logged in or not?
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    // --- User is Logged In ---
-    console.log("User is logged in:", user.email, user.uid);
-    idToken = await user.getIdToken();
-
-    // 1. Hide Login Button, Show Profile Button
-    if (loginBtn) loginBtn.style.display = 'none';
-    if (profileBtn) profileBtn.style.display = 'flex'; // Use 'flex' as it's a flex container
-
-    // 2. Fetch User Data from Firestore
-    const userUID = user.uid; // Use user.uid directly from the auth object
-    const docRef = doc(db, "users", userUID);
-
-    // test for email verifications
-    console.log("Does the email is verfied? : ", user.emailVerified);
+let app, auth, db;
 
 
-    getDoc(docRef)
-      .then((docSnap) => {
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          console.log("User data from Firestore:", userData);
+async function initFirebase() {
+  const response = await fetch('/api/firebase-config');
+  const firebaseConfig = await response.json();
 
-          // Update profile display name and email if elements exist
-          if (pronameElement) pronameElement.innerText = userData.name || user.displayName || user.email;
-          if (proemailElement) proemailElement.innerText = userData.email || user.email;
+  // Initialize Firebase
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
 
-          // Update profile avatar initials 
-          if (profileInitial && userData.name) {
-            const nameParts = userData.name.split(' ').filter(part => part.length > 0);
-            // Generate initials based on name length:
-            // - For single-word names: Uses the first two letters.
-            // - For multi-word names: Uses the first letter of the first two words.
-            if (nameParts.length === 1) {
-              initials = userData.name.substring(0, 2).toUpperCase();
+  // Checking the user if logged in or not?
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // --- User is Logged In ---
+      console.log("User is logged in:", user.email, user.uid);
+      idToken = await user.getIdToken();
 
-            } else {
-              initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
-              initials = initials.substring(0, 2);
-              //                      profileAvatarSpan.innerText = initials.substring(0, 2); // Take first two initials
+      // 1. Hide Login Button, Show Profile Button
+      if (loginBtn) loginBtn.style.display = 'none';
+      if (profileBtn) profileBtn.style.display = 'flex'; // Use 'flex' as it's a flex container
+
+      // 2. Fetch User Data from Firestore
+      const userUID = user.uid; // Use user.uid directly from the auth object
+      const docRef = doc(db, "users", userUID);
+
+      // test for email verifications
+      console.log("Does the email is verfied? : ", user.emailVerified);
+
+
+      getDoc(docRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            console.log("User data from Firestore:", userData);
+
+            // Update profile display name and email if elements exist
+            if (pronameElement) pronameElement.innerText = userData.name || user.displayName || user.email;
+            if (proemailElement) proemailElement.innerText = userData.email || user.email;
+
+            // Update profile avatar initials 
+            if (profileInitial && userData.name) {
+              const nameParts = userData.name.split(' ').filter(part => part.length > 0);
+              // Generate initials based on name length:
+              // - For single-word names: Uses the first two letters.
+              // - For multi-word names: Uses the first letter of the first two words.
+              if (nameParts.length === 1) {
+                initials = userData.name.substring(0, 2).toUpperCase();
+
+              } else {
+                initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                initials = initials.substring(0, 2);
+                //                      profileAvatarSpan.innerText = initials.substring(0, 2); // Take first two initials
+              }
+            } else if (profileInitial && user.email) {
+              initials = user.email.substring(0, 2).toUpperCase(); // Fallback to email initials
             }
-          } else if (profileInitial && user.email) {
-            initials = user.email.substring(0, 2).toUpperCase(); // Fallback to email initials
+          } else {
+            console.log("No matching user document found in Firestore for UID:", userUID);
+            // Fallback to Firebase Auth object data if Firestore document not found
+            if (profileInitial && user.email) {
+              initials = user.email.substring(0, 2).toUpperCase();
+            }
           }
-        } else {
-          console.log("No matching user document found in Firestore for UID:", userUID);
-          // Fallback to Firebase Auth object data if Firestore document not found
+          if (profileInitial) {
+            profileInitial.innerText = initials;
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching user data from Firestore:", error);
+          // Even if Firestore fails, the user is still logged in via Firebase Auth
+          // You might still display user.email or user.displayName here
           if (profileInitial && user.email) {
-            initials = user.email.substring(0, 2).toUpperCase();
+            profileInitial.innerText = user.email.substring(0, 2).toUpperCase();
           }
-        }
-        if (profileInitial) {
-          profileInitial.innerText = initials;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user data from Firestore:", error);
-        // Even if Firestore fails, the user is still logged in via Firebase Auth
-        // You might still display user.email or user.displayName here
-        if (profileInitial && user.email) {
-          profileInitial.innerText = user.email.substring(0, 2).toUpperCase();
-        }
-      });
+        });
 
 
-    showProfileArea();
+      showProfileArea();
 
 
-    // Optional: Attach event listeners here if not already attached globally
-    //if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
-    //logoutButton.onclick = () => {
-    //if (confirm("Are you sure you want to logout?")) {
-    // Call your shared signOutUser function from firebaseAuthObserver.js
-    //signOutUser();
-    // }
-    //};
-    //}
+      // Optional: Attach event listeners here if not already attached globally
+      //if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
+      //logoutButton.onclick = () => {
+      //if (confirm("Are you sure you want to logout?")) {
+      // Call your shared signOutUser function from firebaseAuthObserver.js
+      //signOutUser();
+      // }
+      //};
+      //}
 
 
-  } else {
-    // --- User is Logged Out ---
-    console.log("User is not logged in.");
+    } else {
+      // --- User is Logged Out ---
+      console.log("User is not logged in.");
 
-    // 1. Show Login Button, Hide Profile Button
-    if (loginBtn) loginBtn.style.display = 'flex';
-    if (profileBtn) profileBtn.style.display = 'none';
+      // 1. Show Login Button, Hide Profile Button
+      if (loginBtn) loginBtn.style.display = 'flex';
+      if (profileBtn) profileBtn.style.display = 'none';
 
 
-    // 2. Clear any displayed user data
-    if (pronameElement) pronameElement.innerText = "";
-    if (proemailElement) proemailElement.innerText = "";
-    if (profileInitial) profileInitial.innerText = " "; // Reset to default initials
+      // 2. Clear any displayed user data
+      if (pronameElement) pronameElement.innerText = "";
+      if (proemailElement) proemailElement.innerText = "";
+      if (profileInitial) profileInitial.innerText = " "; // Reset to default initials
 
-    // Optional: Attach login button listener
-    if (loginBtn) {
-      loginBtn.onclick = () => {
-        window.location.href = "/"; // Redirect to your auth/login page
-      };
+      // Optional: Attach login button listener
+      if (loginBtn) {
+        loginBtn.onclick = () => {
+          window.location.href = "/"; // Redirect to your auth/login page
+        };
+      }
     }
-  }
-});
+  });
+}
+
+initFirebase();
 
 // Add this function to show the profile area
 function showProfileArea() {

@@ -15,64 +15,62 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+let app, analytics, auth, db;
+async function initFirebase() {
+  const response = await fetch('/api/firebase-config');
+  const firebaseConfig = await response.json();
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBp5hN8nhz-pYkyo6MZvysR4ViB1ehWfJ0",
-  authDomain: "draftflow-b7b11.firebaseapp.com",
-  projectId: "draftflow-b7b11",
-  storageBucket: "draftflow-b7b11.firebasestorage.app",
-  messagingSenderId: "269160881503",
-  appId: "1:269160881503:web:b8dd4446dbd68bbc626aea",
-  measurementId: "G-HTEHKFJ880",
-};
+  app = initializeApp(firebaseConfig);
+  analytics = getAnalytics(app);
+  auth = getAuth(app);
+  db = getFirestore(app);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  // Initialize Firebase
 
-// Auth state observer - handles automatic login persistence
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in
-    console.log("User is logged in:", user.email);
-    
+  // Auth state observer - handles automatic login persistence
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in
+      console.log("User is logged in:", user.email);
 
-    // If user is on login/signup page, redirect to home
-    const currentPath = window.location.pathname;
-    if (currentPath === "/login" || currentPath === "/signup" || currentPath === "/") {
-      window.location.href = "/home";
+
+      // If user is on login/signup page, redirect to home
+      const currentPath = window.location.pathname;
+      if (currentPath === "/login" || currentPath === "/signup" || currentPath === "/") {
+        window.location.href = "/home";
+      }
+
+      // You can access all user details here:
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
+        creationTime: user.metadata.creationTime,
+        lastSignInTime: user.metadata.lastSignInTime
+      };
+
+      // Use localStorage (persists across sessions) OR sessionStorage (cleared on tab/browser close)
+      localStorage.setItem("userDetails", JSON.stringify(userData));
+    } else {
+      // User is signed out
+      console.log("User is not logged in");
+      localStorage.removeItem("LoggedInUserID");
+
+      // If user is on protected pages, redirect to login
+      const currentPath = window.location.pathname;
+      if (currentPath === "/home" || currentPath.startsWith("/editor")) {
+        window.location.href = "/login";
+      }
     }
-    
-    // You can access all user details here:
-    const userData = {
-  uid: user.uid,
-  email: user.email,
-  displayName: user.displayName,
-  photoURL: user.photoURL,
-  emailVerified: user.emailVerified,
-  creationTime: user.metadata.creationTime,
-  lastSignInTime: user.metadata.lastSignInTime
-};
+  });
 
-// Use localStorage (persists across sessions) OR sessionStorage (cleared on tab/browser close)
-localStorage.setItem("userDetails", JSON.stringify(userData)); 
-  } else {
-    // User is signed out
-    console.log("User is not logged in");
-    localStorage.removeItem("LoggedInUserID");
-    
-    // If user is on protected pages, redirect to login
-    const currentPath = window.location.pathname;
-    if (currentPath === "/home" || currentPath.startsWith("/editor")) {
-      window.location.href = "/login";
-    }
-  }
-});
+}
 
+initFirebase();
 // Email registration
 const Signupbtn = document.getElementById("signupbtn");
 
@@ -182,7 +180,7 @@ async function getUserDataFromFirestore(uid) {
   try {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
