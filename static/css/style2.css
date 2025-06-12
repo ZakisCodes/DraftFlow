@@ -593,25 +593,65 @@
       fill: white;
       transition: var(--transition);
     }
-
-    .content-panel {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--border-radius-lg);
-      backdrop-filter: blur(20px);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-primary);
-      padding: 32px;
-      overflow: hidden;
-      transition: var(--transition);
-    }
-
-    .content-panel:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
+    /*
+  .content-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  backdrop-filter: blur(20px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-primary);
+  padding: 32px;
+  overflow: hidden;
+  transition: var(--transition);
+  }
+  
+  .content-panel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  }
+  */
+.content-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            backdrop-filter: blur(20px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-primary);
+            padding: 32px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .content-panel:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        #contentFrame {
+            width: 100%;
+            flex: 1;
+            border: 0.5px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            background: rgba(255, 255, 255, 0.02);
+            overflow: auto;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+        
+        #contentFrame:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .loading-text {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 16px;
+            text-align: center;
+            padding: 20px;
+        }
     .content-title {
       font-size: 24px;
       font-weight: 700;
