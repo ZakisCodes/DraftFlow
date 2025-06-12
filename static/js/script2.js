@@ -194,5 +194,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        loadHtmlContent()
+
 
     });
+
+    //const Response = localStorage.getItem('Response');
+    //if (Response){
+      //document.getElementById('UserText').innerText = Response;
+    //}
+    function loadHtmlContent() {
+            // Get HTML content from localStorage
+            const response = localStorage.getItem('Response');
+            const iframe = document.getElementById('contentFrame');
+            
+            if (response) {
+                // Set the HTML content in the iframe
+                iframe.srcdoc = response;
+            } else {
+                // Show message if no content found
+                iframe.srcdoc = `
+                    <div style="padding: 20px; text-align: center; color: #666; font-family: Arial, sans-serif;">
+                        <p>No HTML content found in localStorage.</p>
+                        <p>Please store your HTML content in localStorage with key 'Response'.</p>
+                    </div>
+                `;
+            }
+        }
