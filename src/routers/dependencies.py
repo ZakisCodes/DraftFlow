@@ -1,7 +1,9 @@
 import firebase_admin
 from firebase_admin import credentials,auth
-from fastapi import HTTPException,Depends,status
+from fastapi import HTTPException,Depends,status, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from google.adk.sessions import DatabaseSessionService
+
 
 # initializing Firebase App
 if not firebase_admin._apps:
@@ -50,3 +52,32 @@ def get_current_user(credentials: HTTPAuthorizationCredentials=Depends(security)
 # def get_firestore_db():
 #     return firestore.client()
 
+# --- DataBase Dependency for Agentic Sessions ---
+def get_db_session_service(request: Request) -> DatabaseSessionService:
+    """
+    Dependency that provides the DatabaseSessionService instance from app.state.
+    Includes error handling for robust service retrieval.
+    """
+    try:
+        # Attempt to retrieve the session_service from app.state
+        session_service = request.app.state.session_service
+        
+        # Optional: Add a check to ensure the retrieved object is of the expected type
+        # if not isinstance(session_service, DatabaseSessionService):
+        #     raise TypeError("session_service in app.state is not an instance of DatabaseSessionService")
+
+        return session_service
+    except AttributeError:
+        # This occurs if 'session_service' is not found in 'request.app.state'
+        print("Error: 'session_service' not found in app.state. Make sure it's initialized during app startup.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database session service not initialized on the server."
+        )
+    except Exception as e:
+        # Catch any other unexpected errors during retrieval
+        print(f"An unexpected error occurred while getting database session service: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve database session service due to an unexpected error: {e}"
+        )
