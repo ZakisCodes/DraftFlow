@@ -1,18 +1,14 @@
-# routers/assist_router.py
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+# Imports
 import asyncio # For simulating async work
-
+from fastapi import APIRouter, Depends
+from ..models import GenerateTextRequest
 from .dependencies import get_current_user # Import your dependency!
 
 router = APIRouter()
 
-# Define a Pydantic model for the request body
-class GenerateTextRequest(BaseModel):
-    input_text: str
 
 # --- Protected API Endpoint for Text Generation ---
-@router.post("/api/generate_text")
+@router.post("/generate_text")
 async def generate_text_endpoint(
     request_body: GenerateTextRequest, # FastAPI automatically parses JSON body into this model
     decoded_token: dict = Depends(get_current_user) # This line PROTECTS the endpoint
@@ -24,8 +20,8 @@ async def generate_text_endpoint(
     user_email = decoded_token.get("email")
     input_text = request_body.input_text
 
-    print(f"User {user_email} (UID: {user_uid}) requested text generation for: '{input_text[:50]}...'")
-
+    #logs
+    print(f"User {user_email} (UID: {user_uid}) requested text generation for: '{input_text[:50]}'")
     # --- Your AI generation logic would go here ---
     # Simulate an AI API call with a delay
     await asyncio.sleep(2) # Simulate network latency or processing time
@@ -43,3 +39,4 @@ async def generate_text_endpoint(
     # })
 
     return {"status": "success", "generated_text": generated_text}
+
