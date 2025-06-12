@@ -47,12 +47,14 @@ const proemailElement = document.getElementById("proemail");
 let isGenerating = false;
 let isProfileDropdownOpen = false;
 let initials = '';
+let idToken = null;
 
 // Checking the user if logged in or not?
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     // --- User is Logged In ---
     console.log("User is logged in:", user.email, user.uid);
+    idToken = await user.getIdToken();
 
     // 1. Hide Login Button, Show Profile Button
     if (loginBtn) loginBtn.style.display = 'none';
@@ -100,7 +102,7 @@ onAuthStateChanged(auth, (user) => {
             initials = user.email.substring(0, 2).toUpperCase();
           }
         }
-        if (profileInitial){
+        if (profileInitial) {
           profileInitial.innerText = initials;
         }
       })
@@ -112,19 +114,19 @@ onAuthStateChanged(auth, (user) => {
           profileInitial.innerText = user.email.substring(0, 2).toUpperCase();
         }
       });
-      
-      
-     showProfileArea();
+
+
+    showProfileArea();
 
 
     // Optional: Attach event listeners here if not already attached globally
     //if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
-      //logoutButton.onclick = () => {
-        //if (confirm("Are you sure you want to logout?")) {
-          // Call your shared signOutUser function from firebaseAuthObserver.js
-          //signOutUser();
-       // }
-      //};
+    //logoutButton.onclick = () => {
+    //if (confirm("Are you sure you want to logout?")) {
+    // Call your shared signOutUser function from firebaseAuthObserver.js
+    //signOutUser();
+    // }
+    //};
     //}
 
 
@@ -204,35 +206,54 @@ if (textEditor && charCounter) {
 // Generate button functionality
 if (generateBtn) {
   generateBtn.addEventListener("click", async function () {
-    if (isGenerating) return;
+    //if (isGenerating) return;
 
-    const text = textEditor ? textEditor.value.trim() : "";
-    if (!text) {
+    const userText = textEditor ? textEditor.value.trim() : "";
+
+
+    if (!userText) {
       showStatus("Please enter some text to transform!", "error");
       if (textEditor) textEditor.focus();
       return;
     }
 
     setLoadingState(true);
-
+    const requestData = { query: userText };
     try {
-      // Simulate API call with realistic delay
+      // Simulate realistic delay
       await new Promise((resolve) =>
         setTimeout(resolve, 2000 + Math.random() * 2000)
       );
 
-      const transformedText = transformText(text);
-      displayOutput(transformedText);
+      console.log('Sending data:', requestData); // Debug log
+      console.log('JSON string:', JSON.stringify(requestData)); // Debug the JSON
+
+
+      const response = await fetch('/adk/format', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch from API');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('Response', data.response_text);
       showStatus("Text transformed successfully! ✨", "success");
+      window.location.replace('/editor');
     } catch (error) {
       showStatus("Something went wrong. Please try again.", "error");
-      console.error("Transform error:", error);
+      console.error('Error:', error.message);
     } finally {
       setLoadingState(false);
     }
-  });
-}
-
+  })
+};
 // Clear button functionality
 if (clearBtn) {
   clearBtn.addEventListener("click", function () {
@@ -494,15 +515,15 @@ function showStatus(message, type = "success") {
 // const storedUser = sessionStorage.getItem("userDetails");
 
 //if (storedUser) {
-  //const userDetails = JSON.parse(storedUser);
-  //console.log("UID: ,", userDetails.uid);
-  //console.log("email: ,", userDetails.email);
-  //console.log("photoURL,", userDetails.photoURL);
-  //console.log("Welcome back,", userDetails.UserMetadata);
-  //console.log("emailVerified,", userDetails.emailVerified);
-  //console.log("creationTime,", userDetails.creationTime);
-  //console.log("lastSignInTime,", userDetails.lastSignInTime);
-  //// You can use userDetails.email, userDetails.uid, etc.
- //}else {
-  //console.log("No user data found. Please log in.");
+//const userDetails = JSON.parse(storedUser);
+//console.log("UID: ,", userDetails.uid);
+//console.log("email: ,", userDetails.email);
+//console.log("photoURL,", userDetails.photoURL);
+//console.log("Welcome back,", userDetails.UserMetadata);
+//console.log("emailVerified,", userDetails.emailVerified);
+//console.log("creationTime,", userDetails.creationTime);
+//console.log("lastSignInTime,", userDetails.lastSignInTime);
+//// You can use userDetails.email, userDetails.uid, etc.
+//}else {
+//console.log("No user data found. Please log in.");
 //}
