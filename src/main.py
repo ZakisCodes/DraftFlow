@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 from google.adk.sessions import DatabaseSessionService
 from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 DB_URL = "sqlite:///./multi_agent_data1.db"
 
@@ -61,6 +64,18 @@ async def add_custom_headers(request: Request, call_next):
 #    response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
     response.headers["Cross-Origin-Resource-Policy"] = "cross-origin"
     return response
+
+@app.get("/api/firebase-config")
+async def get_firebase_config():
+    return {
+        "apiKey": os.getenv("FIREBASE_API_KEY"),
+        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
+        "projectId": os.getenv("FIREBASE_PROJECT_ID"),
+        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
+        "messagingSenderId": os.getenv("FIREBASE_MESSAGIN_SENDER_ID"),
+        "appId": os.getenv("FIREBASE_APP_ID"),
+        "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID")
+    }
 
 # loading the endpoints
 app.include_router(api_router)
