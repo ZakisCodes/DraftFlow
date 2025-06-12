@@ -3,15 +3,51 @@ from .routers import router as api_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
+from google.adk.sessions import DatabaseSessionService
+from contextlib import asynccontextmanager
+
+DB_URL = "sqlite:///./multi_agent_data1.db"
+
+# Create a lifespan event to initialize and clean up the session service
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup code
+    print("Application starting up...")
+    
+    # Initialize the DatabaseSessionService instance and store it in app.state
+    # This service will manage sessions in the specified SQLite database
+    try:
+        #app.state.session_service =DatabaseSessionService(
+         #  db_url=DB_URL,
+          # connect_args={"ssl": "require"})
+        app.state.session_service =DatabaseSessionService(db_url=DB_URL)
+        print("Database session service initialized successfully.")
+    except Exception as e:
+        print("Database session service initialized failed.")
+        print(e)
+
+    
+    # Optional: You might want to ensure the database schema is created/upgraded here.
+    # The DatabaseSessionService usually handles table creation on first access,
+    # but explicit setup might be required for production.
+    
+    yield # This is where the application runs, handling requests
+
+    # Shutdown code
+    print("Application shutting down...")
+    # For SQLite, explicit closing might not be necessary, but for other DBs,
+    # you might close connections here if the session service provided a method for it.
+    
 app = FastAPI(
     title="DraftFlow",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
     )
 
 # middleware setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # your frontend origin
+    allow_origins=["*"],  # your frontend origin allow_origins=["http://localhost:8080"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
