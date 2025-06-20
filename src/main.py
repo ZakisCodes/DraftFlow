@@ -8,7 +8,6 @@ from contextlib import asynccontextmanager
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
 DB_URL = "sqlite:///./multi_agent_data1.db"
 
 # Create a lifespan event to initialize and clean up the session service
