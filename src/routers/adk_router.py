@@ -8,6 +8,7 @@ from ..agents.format_agent.agent import FormatAgentOrchestrator
 from google.genai import types
 import os
 from dotenv import load_dotenv
+from ..utils import clean_html_response
 load_dotenv()
 # setting up Logger
 logging.basicConfig(
@@ -107,7 +108,7 @@ async def query_agent_endpoint(
 
 
         if last_event_content:
-            final_response_text=last_event_content
+            final_response_text= clean_html_response(last_event_content)
         else:
             logger.error("No final response event found from the Sequential Agent.")
 
