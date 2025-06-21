@@ -329,6 +329,40 @@ background: var(--glass-bg);
   fill: currentColor;
 }
 
+/* AutoSave indicator */
+.save-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    background: var(--secondary-bg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: var(--transition);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.save-status.saving {
+    color: #94a3b8;
+    background: #1e293b;
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+.save-status.saved {
+    color: #86efac;
+    background: #1e293b;
+    border-color: rgba(134, 239, 172, 0.2);
+}
+
+.document-title-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+    max-width: 300px;
+}
+
 /* Export Modal Styles */
 .export-modal {
   position: fixed;
@@ -489,7 +523,7 @@ background: var(--glass-bg);
   margin-right: auto;
 }
 
-.nav-title-input {
+.document-title-input {
   background: transparent;
   border: none;
   font-weight: 500;
@@ -503,8 +537,13 @@ background: var(--glass-bg);
   min-width: 120px;
 }
 
-.nav-title-input:hover,
-.nav-title-input:focus {
+.document-title-input:hover,
+.document-title-input:focus {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.title-export{
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
 }
