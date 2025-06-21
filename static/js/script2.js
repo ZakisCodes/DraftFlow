@@ -63,9 +63,11 @@ const toolIcons = {
 // Voice recording constants
 const VOICE_RECORDING_TIMEOUT = 3000; // 3 seconds simulation timeout
 const SUBJECT_BOX_TIMEOUT = 5000;
+
 // ==========================================
 // UTILITY FUNCTIONS
 // ==========================================
+
 function showStatus(message, type = "success") {
   // Remove existing status messages
   const existingStatus = document.querySelector(".status-message");
@@ -106,7 +108,211 @@ function loadHtmlContent() {
       </div>
     `;
   }
+
+  // Initialize auto-save after loading content
+  setTimeout(() => {
+    if (window.autoSaver) {
+      window.autoSaver.setupAutoSave();
+    }
+  }, 500);
 }
+
+
+// ==========================================
+// AUTO-SAVE MODULE
+// ==========================================
+const AutoSaveModule = {
+  autoSaver: null,
+
+  // Auto-save system for iframe content
+  createAutoSaver(iframeElement, options = {}) {
+    return new IframeAutoSave(iframeElement, options);
+  },
+
+  initializeAutoSave() {
+    if (!elements.contentFrame) {
+      console.error('Iframe element not found');
+      return;
+    }
+
+    // Create auto-save instance
+    window.autoSaver = this.createAutoSaver(elements.contentFrame, {
+      saveKey: 'Response',
+      saveDelay: 1000 // Save after 1 second of inactivity
+    });
+
+    this.autoSaver = window.autoSaver;
+    console.log('Auto-save system ready');
+  },
+
+  initSaveStatus() {
+    const saveStatus = document.getElementById('save-status');
+    if (saveStatus) {
+      saveStatus.textContent = 'Saved';
+      saveStatus.className = 'save-status saved';
+    }
+  },
+
+  // Public methods for external access
+  forceSave() {
+    if (this.autoSaver) {
+      this.autoSaver.forceSave();
+    }
+  },
+
+  setAutoSave(enabled) {
+    if (this.autoSaver) {
+      this.autoSaver.setAutoSave(enabled);
+    }
+  }
+};
+
+// ==========================================
+// IFRAME AUTO-SAVE CLASS
+// ==========================================
+class IframeAutoSave {
+  constructor(iframeElement, options = {}) {
+    this.iframe = iframeElement;
+    this.saveKey = options.saveKey || 'Response';
+    this.saveDelay = options.saveDelay || 1000; // Auto-save delay in ms
+    this.saveTimeout = null;
+    this.isEditable = false;
+
+    this.init();
+  }
+
+  init() {
+    // Wait for iframe to load before setting up auto-save
+    this.iframe.addEventListener('load', () => {
+      this.setupAutoSave();
+    });
+  }
+
+  setupAutoSave() {
+    try {
+      const iframeDoc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+
+      if (!iframeDoc) {
+        console.warn('Cannot access iframe document. Make sure iframe is from same origin.');
+        return;
+      }
+
+      // Set up content observation for auto-save
+      this.observeContentChanges(iframeDoc);
+
+      console.log('Auto-save system initialized');
+    } catch (error) {
+      console.error('Error setting up auto-save:', error);
+    }
+  }
+
+  observeContentChanges(iframeDoc) {
+    // Method 1: Using MutationObserver (most reliable)
+    const observer = new MutationObserver(() => {
+      this.scheduleAutoSave();
+    });
+
+    observer.observe(iframeDoc.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true
+    });
+    /*
+        // Method 2: Input events for form elements
+        iframeDoc.addEventListener('input', () => {
+          this.scheduleAutoSave();
+        });
+    
+        // Method 3: Key events for contentEditable areas
+        iframeDoc.addEventListener('keyup', () => {
+          this.scheduleAutoSave();
+        });
+    
+        // Method 4: Paste events
+        iframeDoc.addEventListener('paste', () => {
+          // Delay to allow paste content to be processed
+          setTimeout(() => this.scheduleAutoSave(), 100);
+        });
+    
+        // Method 5: Focus out events (save when user clicks away)
+        iframeDoc.addEventListener('blur', () => {
+          this.saveNow();
+        }, true);
+        */
+  }
+
+  scheduleAutoSave() {
+    // Show saving status immediately
+    this.showSaveIndicator('saving');
+
+    // Clear existing timeout
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+
+    // Schedule new save
+    this.saveTimeout = setTimeout(() => {
+      this.saveNow();
+    }, this.saveDelay);
+  }
+
+  saveNow() {
+    try {
+      const iframeDoc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+
+      if (!iframeDoc) return;
+
+      const htmlContent = iframeDoc.documentElement.outerHTML;
+      localStorage.setItem(this.saveKey, htmlContent);
+
+      // Show saved status
+      this.showSaveIndicator('saved');
+
+      console.log('Content auto-saved');
+    } catch (error) {
+      console.error('Error saving content:', error);
+      // Show error status
+      const indicator = document.getElementById('save-status');
+      if (indicator) {
+        indicator.textContent = 'Error';
+        indicator.className = 'save-status';
+        indicator.style.color = '#dc3545';
+      }
+    }
+  }
+
+  showSaveIndicator(status = 'saving') {
+    const indicator = document.getElementById('save-status');
+
+    if (!indicator) return;
+
+    if (status === 'saving') {
+      indicator.textContent = 'Saving...';
+      indicator.className = 'save-status saving';
+    } else if (status === 'saved') {
+      indicator.textContent = 'Saved';
+      indicator.className = 'save-status saved';
+    }
+  }
+
+  // Manual save method
+  forceSave() {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    this.saveNow();
+  }
+
+  // Enable/disable auto-save
+  setAutoSave(enabled) {
+    if (!enabled && this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
+  }
+}
+
 
 function showProfileArea() {
   const profileContainer = document.querySelector(".profile-loading");
@@ -648,25 +854,63 @@ const ExportModule = {
     }
   },
 
-  confirmExport() {
+  async confirmExport() {
     const selectedOptions = {};
+    const fileName = document.getElementById('fileName').value;
+    const iframe = document.getElementById("contentFrame");
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    const html = doc.documentElement.outerHTML;
+    const idToken = localStorage.getItem("IDtemp")
+    // Create the payload with both HTML and filename
+    const payload = {
+      html: html,
+      filename: fileName // assuming titleName is accessible in this scope
+    };
 
-    document.querySelectorAll('.option-group').forEach(group => {
-      const buttons = group.querySelectorAll('.option-button.selected');
-      const optionType = buttons[0]?.dataset.option;
+    try {
+      const resp = await fetch("/api/generate-pdf", {
 
-      if (optionType === 'include') {
-        selectedOptions[optionType] = Array.from(buttons).map(btn => btn.dataset.value);
-      } else {
-        selectedOptions[optionType] = buttons[0]?.dataset.value;
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        console.error("Export failed:", errorText);
+        return;
       }
-    });
 
-    console.log('Export options:', selectedOptions);
-
-    // Simulate export process
-    alert(`Exporting conversation as ${selectedOptions.format?.toUpperCase()} with ${selectedOptions.content} content...`);
-
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export error:", error);
+    }
+    /*
+        document.querySelectorAll('.option-group').forEach(group => {
+          const buttons = group.querySelectorAll('.option-button.selected');
+          const optionType = buttons[0]?.dataset.option;
+    
+          if (optionType === 'include') {
+            selectedOptions[optionType] = Array.from(buttons).map(btn => btn.dataset.value);
+          } else {
+            selectedOptions[optionType] = buttons[0]?.dataset.value;
+          }
+        });
+    
+        console.log('Export options:', selectedOptions);
+    
+        // Simulate export process
+        alert(`Exporting conversation as ${selectedOptions.format?.toUpperCase()} with ${selectedOptions.content} content...`);
+    */
     this.closeModal();
   },
 
@@ -1328,8 +1572,108 @@ const ContentModule = (function () {
 })();
 
 // ==========================================
+// TITLE SYNCHRONIZATION FUNCTIONALITY
+// ==========================================
+const TitleSyncModule = {
+  currentTitle: 'Untitled',
+  navTitleInput: null,
+  exportTitleInput: null,
+
+  // Get references to input elements
+  getElements() {
+    this.navTitleInput = document.querySelector('.nav-bar .document-title-input');
+    this.exportTitleInput = document.querySelector('.export-modal .document-title-input');
+
+    return this.navTitleInput && this.exportTitleInput;
+  },
+
+  // Update title value and sync both inputs
+  updateTitle(newTitle) {
+    // Update the stored title value
+    this.currentTitle = newTitle || 'Untitled';
+
+    // Synchronize both input fields
+    if (this.navTitleInput) {
+      this.navTitleInput.value = this.currentTitle;
+    }
+    if (this.exportTitleInput) {
+      this.exportTitleInput.value = this.currentTitle;
+    }
+
+    // Optional: Update document title
+    document.title = this.currentTitle;
+
+    // Dispatch custom event for other modules
+    this.dispatchTitleChangeEvent();
+  },
+
+  // Dispatch title change event
+  dispatchTitleChangeEvent() {
+    const event = new CustomEvent('titleChanged', {
+      detail: { title: this.currentTitle }
+    });
+    document.dispatchEvent(event);
+  },
+
+  // Handle input events
+  handleInputChange(event) {
+    this.updateTitle(event.target.value);
+  },
+
+  // Public method to get current title
+  getTitle() {
+    return this.currentTitle;
+  },
+
+  // Public method to set title programmatically
+  setTitle(title) {
+    this.updateTitle(title);
+  },
+
+  // Initialize title synchronization
+  initTitleSync() {
+    if (!this.getElements()) {
+      console.warn('Title input elements not found');
+      return;
+    }
+
+    // Set initial values
+    this.navTitleInput.value = this.currentTitle;
+    this.exportTitleInput.value = this.currentTitle;
+
+    // Add event listeners for synchronization
+    this.navTitleInput.addEventListener('input', (e) => this.handleInputChange(e));
+    this.navTitleInput.addEventListener('blur', (e) => this.handleInputChange(e));
+
+    this.exportTitleInput.addEventListener('input', (e) => this.handleInputChange(e));
+    this.exportTitleInput.addEventListener('blur', (e) => this.handleInputChange(e));
+
+    console.log('Title synchronization initialized');
+  }
+};
+
+// Optional: Listen for title changes from other modules
+document.addEventListener('titleChanged', (e) => {
+  console.log('Title changed to:', e.detail.title);
+  // Add additional logic here when title changes if needed
+});
+
+
+// ==========================================
 // GLOBAL FUNCTIONS (for external access)
 // ==========================================
+function initializeAutoSave() {
+  AutoSaveModule.initializeAutoSave();
+}
+
+function forceSave() {
+  AutoSaveModule.forceSave();
+}
+
+function setAutoSave(enabled) {
+  AutoSaveModule.setAutoSave(enabled);
+}
+
 function openExportModal() {
   ExportModule.openModal();
 }
@@ -1391,8 +1735,10 @@ document.addEventListener('DOMContentLoaded', () => {
   SubjectModule.initSubjectBox();
   UndoRedoModule.init();
   ContentModule.init();
-
-  // Load content and show profile
+  TitleSyncModule.initTitleSync();
+  AutoSaveModule.initSaveStatus();
+  // Load  content and show profile
   loadHtmlContent();
   showProfileArea();
+  initializeAutoSave();
 });
