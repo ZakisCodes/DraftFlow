@@ -24,7 +24,7 @@
                                 </div>
                                 <div class="brand-text">DraftFlow</div>
                             </div>
-                            
+
                         </a>
                     </div>
                     <div class="chat-container">
@@ -169,7 +169,10 @@
             <section class="content-column">
                 <div class="content-panel">
                     <div class="nav-bar">
-                        <input type="text" class="nav-title-input" value="Untitled" placeholder="Untitled">
+                        <div class="document-title-container">
+                            <input type="text" class="document-title-input" value="Untitled" placeholder="Untitled">
+                            <div class="save-status" id="save-status">Saved</div>
+                        </div>
                         <div class="tooltip-container">
                             <button class="nav-button" id="undoBtn">
                                 <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -325,14 +328,20 @@
 
                                 <div class="export-options">
                                     <div class="option-group">
+                                        <div class="option-label">File Name</div>
+                                        <div class="option-buttons">
+                                            <input type="text" class="document-title-input title-export"
+                                                value="Untitled" placeholder="Untitled" id="fileName">
+
+                                        </div>
+                                    </div>
+                                    <div class="option-group">
                                         <div class="option-label">Format</div>
                                         <div class="option-buttons">
                                             <button class="option-button selected" data-option="format"
                                                 data-value="pdf">PDF</button>
                                             <button class="option-button" data-option="format"
                                                 data-value="docx">DOCX</button>
-                                            <button class="option-button" data-option="format"
-                                                data-value="txt">TXT</button>
                                             <button class="option-button" data-option="format"
                                                 data-value="html">HTML</button>
                                         </div>
@@ -344,21 +353,7 @@
                                             <button class="option-button selected" data-option="content"
                                                 data-value="all">Full Conversation</button>
                                             <button class="option-button" data-option="content"
-                                                data-value="selected">Selected Messages</button>
-                                            <button class="option-button" data-option="content"
                                                 data-value="summary">Summary Only</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="option-group">
-                                        <div class="option-label">Include</div>
-                                        <div class="option-buttons">
-                                            <button class="option-button selected" data-option="include"
-                                                data-value="timestamps">Timestamps</button>
-                                            <button class="option-button selected" data-option="include"
-                                                data-value="metadata">Metadata</button>
-                                            <button class="option-button" data-option="include"
-                                                data-value="attachments">Attachments</button>
                                         </div>
                                     </div>
                                 </div>
