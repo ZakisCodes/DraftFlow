@@ -49,7 +49,7 @@ async function initFirebase() {
       // --- User is Logged In ---
       console.log("User is logged in:", user.email, user.uid);
       idToken = await user.getIdToken();
-
+      localStorage.setItem("IDtemp", idToken); // temporary
       // 1. Hide Login Button, Show Profile Button
       if (loginBtn) loginBtn.style.display = 'none';
       if (profileBtn) profileBtn.style.display = 'flex'; // Use 'flex' as it's a flex container
