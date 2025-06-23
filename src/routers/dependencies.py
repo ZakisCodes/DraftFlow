@@ -38,6 +38,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials=Depends(security)
     """
     try:
         decoded_token = auth.verify_id_token(credentials.credentials)
+        print("Token Verification succesful")
         return decoded_token
     except Exception as e:
         print(f"Token Verification Failed: {e}")

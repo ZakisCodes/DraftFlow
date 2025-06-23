@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
@@ -9,12 +9,6 @@ class AgentQueryRequest(BaseModel):
 
 # session_id: Optional[str] = None # For maintaining session state across queries
 
-
-# Experimental purposes model
-class GenerateTextRequest(BaseModel):
-    input_text: str
-
-
 # Agent Return structure
 class AgentResponse(BaseModel):
     status: str
@@ -24,3 +18,16 @@ class AgentResponse(BaseModel):
 class PDFRequest(BaseModel):
     html: str
     filename: str
+    
+class DelegateAgentResponse(BaseModel):
+    status: str = Field(..., description="Status of the operation (e.g., 'success', 'failure').")
+    response_message: str = Field(..., description="A user-friendly message about the operation's outcome.")
+    revised_text: Optional[str] = Field(None, description="The processed or revised text, if applicable.")
+    dataBlockId: Optional[str]
+
+class DelegateAgentQueryRequest(BaseModel):
+    original_text: Optional[str] 
+    user_query:  Optional[str]
+    userSelectedText : Optional[str]
+    dataBlockId: Optional[str]
+    blockContent: Optional[str]

@@ -57,6 +57,7 @@ async function initFirebase() {
       // 2. Fetch User Data from Firestore
       const userUID = user.uid; // Use user.uid directly from the auth object
       const docRef = doc(db, "users", userUID);
+      localStorage.setItem("userId", userUID);
 
       // test for email verifications
       console.log("Does the email is verfied? : ", user.emailVerified);
