@@ -11,10 +11,22 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt 
 # Create a non-root user 'vscode' and give it ownership of /workspace
 # Install Python dependencies and set up non-root user in one layer
-RUN apt update && apt install -y nano git && \
-    useradd -m vscode && \
-    mkdir -p /workspace && \
-    chown -R vscode:vscode /workspace
+RUN apt-get update && apt-get install -y \
+    nano \
+    git \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    fonts-liberation \
+    fonts-dejavu-core \
+    shared-mime-info \
+  && rm -rf /var/lib/apt/lists/* \
+  && useradd -m vscode \
+  && mkdir -p /workspace \
+  && chown -R vscode:vscode /workspace
+
 
 # 4. Copy the rest of your code
 COPY . .

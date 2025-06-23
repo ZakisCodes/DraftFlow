@@ -22,7 +22,6 @@ const charCounter = document.getElementById("charCounter");
 const buttonText = document.getElementById("buttonText");
 const profileBtn = document.getElementById("profileBtn");
 const loginBtn = document.getElementById('logInBtn');
-const profileAvatarSpan = profileBtn ? profileBtn.querySelector('.profile-avatar span') : null; // Get the span inside profile-avatar
 const profileInitial = document.getElementById('initial');
 const pronameElement = document.getElementById("proname");
 const proemailElement = document.getElementById("proemail");
@@ -50,7 +49,7 @@ async function initFirebase() {
       // --- User is Logged In ---
       console.log("User is logged in:", user.email, user.uid);
       idToken = await user.getIdToken();
-
+      localStorage.setItem("IDtemp", idToken); // temporary
       // 1. Hide Login Button, Show Profile Button
       if (loginBtn) loginBtn.style.display = 'none';
       if (profileBtn) profileBtn.style.display = 'flex'; // Use 'flex' as it's a flex container
@@ -112,17 +111,6 @@ async function initFirebase() {
 
 
       showProfileArea();
-
-
-      // Optional: Attach event listeners here if not already attached globally
-      //if (logoutButton) { // Assuming 'logoutButton' is the ID for a logout button
-      //logoutButton.onclick = () => {
-      //if (confirm("Are you sure you want to logout?")) {
-      // Call your shared signOutUser function from firebaseAuthObserver.js
-      //signOutUser();
-      // }
-      //};
-      //}
 
 
     } else {
@@ -389,6 +377,7 @@ function transformText(text) {
   return formattedLines.join("\n").trim();
 }
 
+/*
 function displayOutput(text) {
   if (outputContent) outputContent.textContent = text;
   if (outputSection) outputSection.classList.add("visible");
@@ -403,7 +392,7 @@ function displayOutput(text) {
     }
   }, 300);
 }
-
+  */
 // Profile button functionality
 if (profileBtn) {
   profileBtn.addEventListener("click", function (e) {
