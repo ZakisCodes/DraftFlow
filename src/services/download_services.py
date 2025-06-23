@@ -5,7 +5,6 @@ import io
 import logging
 from typing import Optional
 from weasyprint import HTML
-from bs4 import BeautifulSoup
 import re
 # Configure logging
 logger = logging.getLogger(__name__)
