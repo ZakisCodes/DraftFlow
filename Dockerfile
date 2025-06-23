@@ -39,7 +39,8 @@ EXPOSE 8000
 
 # 6. Default command: run uvicorn with reload
 #CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+
 
 
 
