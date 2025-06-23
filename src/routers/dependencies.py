@@ -3,12 +3,17 @@ from firebase_admin import credentials,auth
 from fastapi import HTTPException,Depends,status, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
+import os
 
+# Load from environment variable
+creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
 
+if not creds_json:
+    raise RuntimeError("Missing Firebase credentials in environment variables.")
 # initializing Firebase App
 if not firebase_admin._apps:
     try:
-        cred = credentials.Certificate('/workspace/draftflow-b7b11-firebase-adminsdk-fbsvc-77f9fcd8a6.json')
+        cred = credentials.Certificate(creds_json)
         firebase_admin.initialize_app(credential=cred)
     except Exception as e:
         # Log the error and raise an exception to prevent the app from starting if Firebase init fails
