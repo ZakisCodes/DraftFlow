@@ -38,7 +38,9 @@ USER vscode
 EXPOSE 8000
 
 # 6. Default command: run uvicorn with reload
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
+#CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+
 
 
 # (Optional) Add a healthcheck to ensure the container is healthy
