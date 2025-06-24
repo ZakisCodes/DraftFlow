@@ -8,7 +8,7 @@ import os
 # Load from environment variable
 #creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
 creds_file_path = "/etc/secrets/GOOGLE_CREDENTIALS_JSON.json"
-if not creds_json:
+if not creds_file_path:
     raise RuntimeError("Missing Firebase credentials in environment variables.")
 # initializing Firebase App
 if not firebase_admin._apps:
