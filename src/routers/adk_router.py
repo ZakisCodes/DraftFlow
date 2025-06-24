@@ -34,8 +34,7 @@ edits_dict = {}
 load_dotenv()
 # setting up Logger
 logging.basicConfig(
-    filename="new_logs.log",
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
