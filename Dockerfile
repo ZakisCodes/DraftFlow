@@ -22,7 +22,9 @@ RUN apt-get update && apt-get install -y \
     fonts-liberation \
     fonts-dejavu-core \
     shared-mime-info \
+    gosu \
   && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean  \
   && useradd -m vscode \
   && mkdir -p /workspace \
   && chown -R vscode:vscode /workspace
