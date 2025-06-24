@@ -36,7 +36,7 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Tell Docker to run as that user from here on
-USER vscode
+USER root
 
 # 5. Expose FastAPI’s port
 EXPOSE 8000
