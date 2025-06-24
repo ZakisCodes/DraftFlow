@@ -31,12 +31,6 @@ RUN apt-get update && apt-get install -y \
 # 4. Copy the rest of your code
 COPY . .
 
-
-# We need to ensure the 'vscode' user (who will run the app) can read it.
-# The filename here MUST exactly match the name you gave your secret file in Render.
-# Assuming you named it 'GOOGLE_CREDENTIALS_JSON.json' when uploading to Render Secret Files.
-RUN chmod 644 /etc/secrets/GOOGLE_CREDENTIALS_JSON.json
-
 # Tell Docker to run as that user from here on
 USER vscode
 
