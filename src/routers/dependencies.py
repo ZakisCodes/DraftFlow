@@ -6,14 +6,14 @@ from google.adk.sessions import DatabaseSessionService
 import os
 
 # Load from environment variable
-creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-
+#creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+creds_file_path = "/etc/secrets/GOOGLE_CREDENTIALS_JSON.json"
 if not creds_json:
     raise RuntimeError("Missing Firebase credentials in environment variables.")
 # initializing Firebase App
 if not firebase_admin._apps:
     try:
-        cred = credentials.Certificate(creds_json)
+        cred = credentials.Certificate(creds_file_path)
         firebase_admin.initialize_app(credential=cred)
     except Exception as e:
         # Log the error and raise an exception to prevent the app from starting if Firebase init fails
