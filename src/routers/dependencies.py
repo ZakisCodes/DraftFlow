@@ -4,22 +4,39 @@ from fastapi import HTTPException,Depends,status, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
+# Define the environment variable name where the JSON content will be stored.
+# This MUST match the ENV_VAR_NAME in your entrypoint.sh script.
+FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
 
-# Load from environment variable
-#creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-creds_file_path = "/etc/secrets/GOOGLE_CREDENTIALS_JSON.json"
-if not creds_file_path:
-    raise RuntimeError("Missing Firebase credentials in environment variables.")
-# initializing Firebase App
+# Load the JSON string from the environment variable
+creds_json_string = os.environ.get(FIREBASE_CREDS_ENV_VAR)
+
+# Check if the environment variable is missing
+if not creds_json_string:
+    raise RuntimeError(f"Missing Firebase credentials in environment variable: '{FIREBASE_CREDS_ENV_VAR}'. "
+                       "Ensure your entrypoint.sh script is setting this variable correctly.")
+
+# Initialize Firebase App
 if not firebase_admin._apps:
     try:
-        cred = credentials.Certificate(creds_file_path)
+        # Parse the JSON string into a Python dictionary
+        creds_dict = json.loads(creds_json_string)
+        
+        # Initialize Firebase with the dictionary (not a file path)
+        cred = credentials.Certificate(creds_dict)
         firebase_admin.initialize_app(credential=cred)
+        print("Firebase Admin SDK initialized successfully from environment variable.") # Add a success log
+    except json.JSONDecodeError as e:
+        # Handle cases where the environment variable content is not valid JSON
+        error_msg = f"Failed to parse Firebase credentials JSON from environment variable '{FIREBASE_CREDS_ENV_VAR}': {e}. " \
+                    "Please ensure the content of your secret file is valid JSON."
+        print(f"ERROR: {error_msg}")
+        raise RuntimeError(error_msg)
     except Exception as e:
-        # Log the error and raise an exception to prevent the app from starting if Firebase init fails
-        print(f"ERROR: Failed to initialize Firebase Admin SDK: {e}")
-        raise RuntimeError(f"Firebase Admin SDK initialization failed: {e}")
-
+        # Catch any other exceptions during Firebase Admin SDK initialization
+        error_msg = f"Firebase Admin SDK initialization failed: {e}"
+        print(f"ERROR: {error_msg}")
+        raise RuntimeError(error_msg)
 
 # --- Security Dependency for JWT Token Extraction ---
 # This object will look for an "Authorization: Bearer <token>" header
