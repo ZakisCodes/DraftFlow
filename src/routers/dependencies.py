@@ -4,6 +4,7 @@ from fastapi import HTTPException,Depends,status, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
+import json
 # Define the environment variable name where the JSON content will be stored.
 # This MUST match the ENV_VAR_NAME in your entrypoint.sh script.
 FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
