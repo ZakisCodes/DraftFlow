@@ -6,4 +6,4 @@ Adk_logs.log
 multi_agent_data.db
 multi_agent_data1.db
 new_logs.log
-statis/js/editordev.js
+static/js/editordev.js
