@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt 
 
 # Install Python dependencies and set up non-root user in one layer
-RUN RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     nano \
     git \
     libcairo2 \
