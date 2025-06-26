@@ -5,21 +5,51 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
 
-# Load from environment variable
-creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-
-if not creds_json:
-    raise RuntimeError("Missing Firebase credentials in environment variables.")
-# initializing Firebase App
+APP_ENV = os.environ.get("APP_ENV", "development") 
 if not firebase_admin._apps:
     try:
-        cred = credentials.Certificate(creds_json)
-        firebase_admin.initialize_app(credential=cred)
-    except Exception as e:
-        # Log the error and raise an exception to prevent the app from starting if Firebase init fails
-        print(f"ERROR: Failed to initialize Firebase Admin SDK: {e}")
-        raise RuntimeError(f"Firebase Admin SDK initialization failed: {e}")
+        if APP_ENV == "production":
+            FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
+            creds_json_string = os.environ.get(FIREBASE_CREDS_ENV_VAR)
+            # Check if the environment variable is missing
+            if not creds_json_string:
+                raise RuntimeError(
+                    f"Missing Firebase credentials in environment variable: '{FIREBASE_CREDS_ENV_VAR}'. "
+                     "Ensure your entrypoint.sh script is setting this variable correctly.")
 
+            # Parse the JSON string into a Python dictionary
+            creds_dict = json.loads(creds_json_string)
+            # Initialize Firebase with the dictionary 
+            cred = credentials.Certificate(creds_dict)
+            firebase_admin.initialize_app(credential=cred)
+            print("Firebase Admin SDK initialized successfully from environment variable.") # Add a success log
+
+        else: # APP_ENV is "development"
+            # --- DEVELOPMENT FIREBASE INITIALIZATION ---
+            FIREBASE_LOCAL_CREDS_PATH = '/workspace/FIREBASE_CREDENTIALS.json'
+            
+            if not os.path.exists(FIREBASE_LOCAL_CREDS_PATH):
+                raise RuntimeError(
+                    f"Missing local Firebase credentials file: '{FIREBASE_LOCAL_CREDS_PATH}'. "
+                    "Please ensure this file exists for local development. "
+                    "Make sure it's mounted into the /workspace directory in your dev container."
+                )
+            
+            cred = credentials.Certificate(FIREBASE_LOCAL_CREDS_PATH)
+            firebase_admin.initialize_app(credential=cred)
+            print("Firebase Admin SDK initialized successfully from local file (DEVELOPMENT).")
+
+    except json.JSONDecodeError as e:
+        error_msg = (
+            f"Failed to parse Firebase credentials JSON from environment variable '{FIREBASE_CREDS_ENV_VAR}': {e}. "
+            "Please ensure the content of your secret file (in Render or .env) is valid JSON."
+        )
+        print(f"ERROR: {error_msg}")
+        raise RuntimeError(error_msg)
+    except Exception as e:
+        error_msg = f"Firebase Admin SDK initialization failed: {e}"
+        print(f"ERROR: {error_msg}")
+        raise RuntimeError(error_msg)
 
 # --- Security Dependency for JWT Token Extraction ---
 # This object will look for an "Authorization: Bearer <token>" header

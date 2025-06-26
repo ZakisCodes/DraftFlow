@@ -3,7 +3,7 @@
 {
 	// For format details, see https://aka.ms/devcontainer.json
   "name": "Draftflow Dev Container",
-  "dockerComposeFile": ["../docker-compose.yml"],
+  "dockerComposeFile": ["../docker-compose.yml", "../docker-compose.dev.yml"],
   "service": "web",
   "workspaceFolder": "/workspace",
   "forwardPorts": [8000],
