@@ -5,10 +5,25 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
 import json
-APP_ENV = os.environ.get("APP_ENV", "development") 
+APP_ENV = os.environ.get("APP_ENV", "production") 
 if not firebase_admin._apps:
     try:
-        if APP_ENV == "production":
+        if APP_ENV == "development":
+            # --- DEVELOPMENT FIREBASE INITIALIZATION ---
+            FIREBASE_LOCAL_CREDS_PATH = '/workspace/FIREBASE_CREDENTIALS.json'
+            
+            if not os.path.exists(FIREBASE_LOCAL_CREDS_PATH):
+                raise RuntimeError(
+                    f"Missing local Firebase credentials file: '{FIREBASE_LOCAL_CREDS_PATH}'. "
+                    "Please ensure this file exists for local development. "
+                    "Make sure it's mounted into the /workspace directory in your dev container."
+                )
+            
+            cred = credentials.Certificate(FIREBASE_LOCAL_CREDS_PATH)
+            firebase_admin.initialize_app(credential=cred)
+            print("Firebase Admin SDK initialized successfully from local file (DEVELOPMENT).")
+
+        else: # APP_ENV is "Production"
             FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
             creds_json_string = os.environ.get(FIREBASE_CREDS_ENV_VAR)
             # Check if the environment variable is missing
@@ -23,21 +38,6 @@ if not firebase_admin._apps:
             cred = credentials.Certificate(creds_dict)
             firebase_admin.initialize_app(credential=cred)
             print("Firebase Admin SDK initialized successfully from environment variable.") # Add a success log
-
-        else: # APP_ENV is "development"
-            # --- DEVELOPMENT FIREBASE INITIALIZATION ---
-            FIREBASE_LOCAL_CREDS_PATH = '/workspace/FIREBASE_CREDENTIALS.json'
-            
-            if not os.path.exists(FIREBASE_LOCAL_CREDS_PATH):
-                raise RuntimeError(
-                    f"Missing local Firebase credentials file: '{FIREBASE_LOCAL_CREDS_PATH}'. "
-                    "Please ensure this file exists for local development. "
-                    "Make sure it's mounted into the /workspace directory in your dev container."
-                )
-            
-            cred = credentials.Certificate(FIREBASE_LOCAL_CREDS_PATH)
-            firebase_admin.initialize_app(credential=cred)
-            print("Firebase Admin SDK initialized successfully from local file (DEVELOPMENT).")
 
     except json.JSONDecodeError as e:
         error_msg = (

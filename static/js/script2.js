@@ -2247,80 +2247,86 @@ window.addEventListener('beforeunload', function() {
 // ==========================================
 
 // Utility functions to access global variables
-function getCurrentBlockId() {
-    return currentBlockId;
-}
 
-function getCurrentRevisedText() {
-    return currentRevisedText;
-}
+window.getCurrentBlockId = function() {
+    return currentBlockId; // Assuming currentBlockId is a top-level module-scoped variable
+};
 
-function getBothValues() {
+window.getCurrentRevisedText = function() {
+    return currentRevisedText; // Assuming currentRevisedText is a top-level module-scoped variable
+};
+
+window.getBothValues = function() {
     return {
         blockId: currentBlockId,
         revisedText: currentRevisedText
     };
-}
+};
 
-function initializeAutoSave() {
+
+
+
+window.initializeAutoSave = function() {
   AutoSaveModule.initializeAutoSave();
-}
+};
 
-function forceSave() {
+window.forceSave = function() {
   AutoSaveModule.forceSave();
-}
+};
 
-function setAutoSave(enabled) {
+window.setAutoSave = function(enabled) {
   AutoSaveModule.setAutoSave(enabled);
-}
+};
 
-function openExportModal() {
+window.openExportModal = function() {
   ExportModule.openModal();
-}
+};
 
-function closeExportModal() {
+window.closeExportModal = function() {
   ExportModule.closeModal();
-}
+};
 
-function confirmExport() {
+window.confirmExport = function() {
   ExportModule.confirmExport();
-}
+};
 
-// Tools global functions
-function showSelectedTool(tool, toolName) {
+window.showSelectedTool = function(tool, toolName) {
   ToolsModule.showSelectedTool(tool, toolName);
-}
+};
 
-function hideSelectedTool() {
-  ToolsModule.hideSelectedTool();
-}
+window.hideSelectedTool = function() {
+    ToolsModule.hideSelectedTool();
+};
 
-// Voice global functions
-function startRecording() {
-  VoiceModule.startRecording();
-}
+window.startRecording = function() {
+    VoiceModule.startRecording();
+};
 
-function stopRecording() {
-  VoiceModule.stopRecording();
-}
+window.stopRecording = function() {
+    VoiceModule.stopRecording();
+};
 
-// Subject Box global functions
-function showSubjectBox(selectedText) {
-  SubjectModule.showSubjectBox(selectedText);
-}
+window.showSubjectBox = function(selectedText) {
+    SubjectModule.showSubjectBox(selectedText);
+};
 
-function hideSubjectBox() {
-  SubjectModule.hideSubjectBox();
-}
+window.hideSubjectBox = function() {
+    SubjectModule.hideSubjectBox();
+};
 
-function togglePreviewMode() {
-  PreviewToggleModule.handleToggle();
-}
+window.togglePreviewMode = function() {
+    PreviewToggleModule.handleToggle();
+};
 
 // ==========================================
 // INITIALIZATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
+  // Load  content and show profile
+  initializeDOMElements();
+  loadHtmlContent();
+  showProfileArea();
+  initializeAutoSave();
   // Initialize all modules
   ChatModule.initChat();
   ExportModule.initExportModal();
@@ -2338,11 +2344,6 @@ document.addEventListener('DOMContentLoaded', () => {
   TitleSyncModule.initTitleSync();
   AutoSaveModule.initSaveStatus();
   
-  // Load  content and show profile
-  initializeDOMElements();
-  loadHtmlContent();
-  showProfileArea();
-  initializeAutoSave();
 
   // websocket
       const userId = localStorage.getItem("userId");
