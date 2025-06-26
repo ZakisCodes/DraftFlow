@@ -1,5 +1,0 @@
-.env merge=ours
-.devcontainer/devcontainer.json merge=ours
-docker-compose.yml merge=ours
-Dockerfile merge=ours
-src/routers/dependencies.py merge=ours

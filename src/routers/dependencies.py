@@ -5,36 +5,48 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
 import json
-# Define the environment variable name where the JSON content will be stored.
-# This MUST match the ENV_VAR_NAME in your entrypoint.sh script.
-FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
-
-# Load the JSON string from the environment variable
-creds_json_string = os.environ.get(FIREBASE_CREDS_ENV_VAR)
-
-# Check if the environment variable is missing
-if not creds_json_string:
-    raise RuntimeError(f"Missing Firebase credentials in environment variable: '{FIREBASE_CREDS_ENV_VAR}'. "
-                       "Ensure your entrypoint.sh script is setting this variable correctly.")
-
-# Initialize Firebase App
+APP_ENV = os.environ.get("APP_ENV", "development") 
 if not firebase_admin._apps:
     try:
-        # Parse the JSON string into a Python dictionary
-        creds_dict = json.loads(creds_json_string)
-        
-        # Initialize Firebase with the dictionary (not a file path)
-        cred = credentials.Certificate(creds_dict)
-        firebase_admin.initialize_app(credential=cred)
-        print("Firebase Admin SDK initialized successfully from environment variable.") # Add a success log
+        if APP_ENV == "production":
+            FIREBASE_CREDS_ENV_VAR = "FIREBASE_SERVICE_ACCOUNT_JSON"
+            creds_json_string = os.environ.get(FIREBASE_CREDS_ENV_VAR)
+            # Check if the environment variable is missing
+            if not creds_json_string:
+                raise RuntimeError(
+                    f"Missing Firebase credentials in environment variable: '{FIREBASE_CREDS_ENV_VAR}'. "
+                     "Ensure your entrypoint.sh script is setting this variable correctly.")
+
+            # Parse the JSON string into a Python dictionary
+            creds_dict = json.loads(creds_json_string)
+            # Initialize Firebase with the dictionary 
+            cred = credentials.Certificate(creds_dict)
+            firebase_admin.initialize_app(credential=cred)
+            print("Firebase Admin SDK initialized successfully from environment variable.") # Add a success log
+
+        else: # APP_ENV is "development"
+            # --- DEVELOPMENT FIREBASE INITIALIZATION ---
+            FIREBASE_LOCAL_CREDS_PATH = '/workspace/FIREBASE_CREDENTIALS.json'
+            
+            if not os.path.exists(FIREBASE_LOCAL_CREDS_PATH):
+                raise RuntimeError(
+                    f"Missing local Firebase credentials file: '{FIREBASE_LOCAL_CREDS_PATH}'. "
+                    "Please ensure this file exists for local development. "
+                    "Make sure it's mounted into the /workspace directory in your dev container."
+                )
+            
+            cred = credentials.Certificate(FIREBASE_LOCAL_CREDS_PATH)
+            firebase_admin.initialize_app(credential=cred)
+            print("Firebase Admin SDK initialized successfully from local file (DEVELOPMENT).")
+
     except json.JSONDecodeError as e:
-        # Handle cases where the environment variable content is not valid JSON
-        error_msg = f"Failed to parse Firebase credentials JSON from environment variable '{FIREBASE_CREDS_ENV_VAR}': {e}. " \
-                    "Please ensure the content of your secret file is valid JSON."
+        error_msg = (
+            f"Failed to parse Firebase credentials JSON from environment variable '{FIREBASE_CREDS_ENV_VAR}': {e}. "
+            "Please ensure the content of your secret file (in Render or .env) is valid JSON."
+        )
         print(f"ERROR: {error_msg}")
         raise RuntimeError(error_msg)
     except Exception as e:
-        # Catch any other exceptions during Firebase Admin SDK initialization
         error_msg = f"Firebase Admin SDK initialization failed: {e}"
         print(f"ERROR: {error_msg}")
         raise RuntimeError(error_msg)

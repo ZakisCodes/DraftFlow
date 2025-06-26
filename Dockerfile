@@ -9,9 +9,9 @@ COPY requirements.txt .
 
 # 3. Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt 
-# Create a non-root user 'vscode' and give it ownership of /workspace
+
 # Install Python dependencies and set up non-root user in one layer
-RUN apt-get update && apt-get install -y \
+RUN RUN apt-get update && apt-get install -y --no-install-recommends \
     nano \
     git \
     libcairo2 \
@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y \
 # 4. Copy the rest of your code
 COPY . .
 
-
 # Copy the entrypoint script and make it executable
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -43,12 +42,12 @@ USER root
 # 5. Expose FastAPI’s port
 EXPOSE 8000
 
+# 6. Default command: run the entrypoint script
+CMD ["/usr/local/bin/entrypoint.sh"]
+
 # 6. Default command: run uvicorn with reload
 #CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--reload"]
 #CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
-
-# 6. Default command: run the entrypoint script
-CMD ["/usr/local/bin/entrypoint.sh"]
 
 
 
