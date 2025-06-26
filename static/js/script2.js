@@ -2114,7 +2114,7 @@ const BlockPatcherModule = (function () {
 let currentBlockId = null;
 let currentRevisedText = null;
 class WebSocketClient {
-    constructor(userId, baseUrl = 'ws://localhost:8080') {
+    constructor(userId, baseUrl = 'ws://draftflow-fjod.onrender.com') {
         this.userId = userId;
         this.baseUrl = baseUrl;
         this.websocket = null;

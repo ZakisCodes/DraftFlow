@@ -4,7 +4,7 @@ from fastapi import HTTPException,Depends,status, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from google.adk.sessions import DatabaseSessionService
 import os
-
+import json
 APP_ENV = os.environ.get("APP_ENV", "development") 
 if not firebase_admin._apps:
     try:
