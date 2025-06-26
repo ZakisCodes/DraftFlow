@@ -1,46 +1,49 @@
 // ==========================================
 // GLOBAL VARIABLES
 // ==========================================
-let isProfileDropdownOpen = false;
-let currentTool = null;
-let isRecording = false;
-let isToolsPopupOpen = false;
-let subjectTimeout = null; // Used to manage the auto-hiding of the subject box
-let userSelectedText = '';// Stores the currently selected text for the subject box
- // Get block-id using closest() method
-let blockId = null;
-let blockContent = null;
+window.isProfileDropdownOpen = false;
+window.currentTool = null;
+window.isRecording = false;
+window.isToolsPopupOpen = false;
+window.subjectTimeout = null; // Used to manage the auto-hiding of the subject box
+window.userSelectedText = '';// Stores the currently selected text for the subject box
+//Get block-id using closest() method
+window.blockId = null;
+window.blockContent = null;
 
 
 // ==========================================
 // DOM ELEMENT REFERENCES
 // ==========================================
-const elements = {
-  profileBtn: document.getElementById("profileBtn"),
-  profileInitial: document.getElementById('initial'),
-  profileDropdown: document.getElementById("profileDropdown"),
-  messageInput: document.getElementById('messageInput'),
-  sendButton: document.getElementById('sendButton'),
-  sendBtn: document.getElementById('sendButton'), // Alias for compatibility
-  messagesWrapper: document.getElementById('messagesWrapper'),
-  exportModal: document.getElementById('exportModal'),
-  contentFrame: document.getElementById('contentFrame'),
-  voiceButton: document.getElementById('voiceBtn'),
-  voiceBtn: document.getElementById('voiceBtn'), // Alias for compatibility
-  toolsButton: document.getElementById('toolsBtn'),
-  toolsBtn: document.getElementById('toolsBtn'), // Alias for compatibility
-  selectedTool: document.getElementById('selectedTool'),
-  selectedToolIcon: document.getElementById('selectedToolIcon'),
-  selectedToolName: document.getElementById('selectedToolName'),
-  selectedToolClose: document.getElementById('selectedToolClose'),
-  toolsPopup: document.getElementById('toolsPopup'),
-  toolItems: document.querySelectorAll('.tool-item'),
-  subjectBox: document.getElementById('subjectBox'),
-  subjectText: document.getElementById('subjectText'),
-  subjectCloseBtn: document.getElementById('subjectCloseBtn'),
-  resizeHandle: document.getElementById('resizeHandle'),
-  previewBtn: document.getElementById('previewBtn')
+const elements = {};
+
+function initializeDOMElements() {
+  elements.profileBtn= document.getElementById("profileBtn");
+  elements.profileInitial= document.getElementById('initial');
+  elements.profileDropdown= document.getElementById("profileDropdown");
+  elements.messageInput= document.getElementById('messageInput');
+  elements.sendButton= document.getElementById('sendButton');
+  elements.sendBtn= document.getElementById('sendButton'); 
+  elements.messagesWrapper= document.getElementById('messagesWrapper');
+  elements.exportModal= document.getElementById('exportModal');
+  elements.contentFrame= document.getElementById('contentFrame');
+  elements.voiceButton= document.getElementById('voiceBtn');
+  elements.voiceBtn= document.getElementById('voiceBtn'); // Alias for compatibility
+  elements.toolsButton= document.getElementById('toolsBtn');
+  elements.toolsBtn= document.getElementById('toolsBtn'); // Alias for compatibility
+  elements.selectedTool= document.getElementById('selectedTool');
+  elements.selectedToolIcon= document.getElementById('selectedToolIcon');
+  elements.selectedToolName= document.getElementById('selectedToolName');
+  elements.selectedToolClose= document.getElementById('selectedToolClose');
+  elements.toolsPopup= document.getElementById('toolsPopup');
+  elements.toolItems= document.querySelectorAll('.tool-item');
+  elements.subjectBox= document.getElementById('subjectBox');
+  elements.subjectText= document.getElementById('subjectText');
+  elements.subjectCloseBtn= document.getElementById('subjectCloseBtn');
+  elements.resizeHandle= document.getElementById('resizeHandle');
+  elements.previewBtn= document.getElementById('previewBtn');
 };
+
 
 // ==========================================
 // CONSTANTS
@@ -1912,7 +1915,15 @@ const BlockPatcherModule = (function () {
 
       // Phase 2: Create and validate new element
       const tempContainer = iframeDoc.createElement('div');
-      tempContainer.innerHTML = currentRevisedText.trim();
+      // ################ S-E-C-U-R-I-T-Y -- F-I-X ################
+      // Sanitize the 'currentRevisedText' using DOMPurify before assigning to innerHTML
+      const sanitizedRevisedText = DOMPurify.sanitize(currentRevisedText.trim(), {
+          USE_PROFILES: { html: true } // This is a good default, allows safe HTML.
+                                      // Adjust if you need more restrictive or permissive settings.
+      });
+      tempContainer.innerHTML = sanitizedRevisedText; // Use the SANITIZED text
+      // #########################################################
+      
       const newElement = tempContainer.firstElementChild;
 
       if (!newElement) {
@@ -2127,20 +2138,20 @@ class WebSocketClient {
                 try {
                     const message = JSON.parse(event.data);
                     console.log('📨 Received WebSocket message:', message);
-                    
+
                     // Handle agent_suggestion messages
                     if (message.type === 'agent_suggestion') {
-                        // Store in global variables
                         currentBlockId = message.block_id;
-                        currentRevisedText = message.revised_text;
-                        
+                        let receivedRevisedText = message.revised_text; // Use a distinct variable name for the received raw text
+
                         console.log('📝 Updated global variables:');
                         console.log('Block ID:', currentBlockId);
-                        console.log('Revised Text:', currentRevisedText);
-                        
-                        // ✅ SOLUTION: Update the block immediately when data is received
-                        if (currentBlockId && currentRevisedText) {
-                            BlockPatcherModule.updateBlock(currentBlockId, currentRevisedText)
+                        console.log('Received Raw Text (Will be sanitized):', receivedRevisedText); // Indicate it will be sanitized
+
+                        if (currentBlockId && receivedRevisedText) {
+                            // Pass the received raw text to updateBlock
+                            // updateBlock will handle the sanitization internally.
+                            BlockPatcherModule.updateBlock(currentBlockId, receivedRevisedText)
                                 .then(success => {
                                     if (success) {
                                         console.log('✅ Block updated successfully');
@@ -2153,7 +2164,7 @@ class WebSocketClient {
                                 });
                         }
                     }
-                    
+
                 } catch (error) {
                     console.error('Error parsing WebSocket message:', error);
                 }
@@ -2326,7 +2337,9 @@ document.addEventListener('DOMContentLoaded', () => {
   ContentModule.init();
   TitleSyncModule.initTitleSync();
   AutoSaveModule.initSaveStatus();
+  
   // Load  content and show profile
+  initializeDOMElements();
   loadHtmlContent();
   showProfileArea();
   initializeAutoSave();
@@ -2346,3 +2359,5 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log('✅ Application initialized successfully');
 });
+
+

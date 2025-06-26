@@ -1,0 +1,12 @@
+services:
+  web:
+    container_name: draftflow-dev
+    build:
+      dockerfile: Dockerfile.dev
+    command: uvicorn src.main:app --host 0.0.0.0 --reload
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=development 
