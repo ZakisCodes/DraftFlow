@@ -340,8 +340,8 @@ function transformText(text) {
     // Add proper sentence spacing
     .replace(/([.!?])\s*([A-Z])/g, "$1 $2")
     // Fix quotes
-    .replace(/"/g, '"')
-    .replace(/"/g, '"')
+    
+    
     .replace(/'/g, '"')
     .replace(/'/g, ":")
     // Capitalize first letter of sentences
