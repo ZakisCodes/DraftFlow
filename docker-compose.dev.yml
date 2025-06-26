@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile.dev
     command: uvicorn src.main:app --host 0.0.0.0 --reload
     environment:
-      - PYTHONUNBUFFERED=1
+      - APP_ENV=development 
     env_file:
       - .env
-    environment:
-      - APP_ENV=development 

@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+    volumes:
+      - .:/workspace:cached
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
